@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aktau Marina Bay — отель на первой береговой линии Каспийского моря в Актау">
+  <!-- Демо-макет: не индексировать поисковиками -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Макет · Aktau Marina Bay — отель у моря</title>
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <link rel="preload" href="fonts/montserrat-300-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/montserrat-400-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/montserrat-600-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/mockup.css">
+  <!-- Без JS анимация появления не запустится — показываем контент сразу -->
+  <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+</head>
+<body>
+
+  <!-- ===== МАКЕТ: пометка «демо» (видна на любом экране) ===== -->
+  <div class="demo-badge" role="note">
+    <b>Демо-макет</b>
+    <span>не рабочий сайт</span>
+  </div>
+
+  <!-- ===== МАКЕТ: закреплённая шапка (появляется после первого экрана) ===== -->
+  <div class="stickybar" id="stickybar" aria-hidden="true">
+    <div class="container stickybar__inner">
+      <a href="#hero" class="logo stickybar__logo">
+        <img src="images/logo.png" alt="" class="logo__icon" width="30" height="32">
+        <img src="images/logo2.png" alt="Aktau Marina Bay" class="logo__wordmark" width="150" height="22">
+      </a>
+      <nav class="stickybar__nav" aria-label="Быстрая навигация">
+        <a href="#rooms">Номера</a>
+        <a href="#offers">Предложения</a>
+        <a href="#biohacking">Fit Revolution</a>
+        <a href="#restaurant">Ресторан</a>
+        <a href="#concierge">Туры по Мангистау</a>
+        <a href="#location">Контакты</a>
+      </nav>
+      <div class="stickybar__actions">
+        <span class="lang-switch"><b>РУС</b> · ҚАЗ · ENG</span>
+        <a href="https://wa.me/77782395986" class="stickybar__wa" aria-label="WhatsApp" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 005.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89A11.82 11.82 0 0012.05 0zm0 21.78a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.88 9.88 0 019.88 9.89c0 5.45-4.43 9.88-9.89 9.88z"/></svg>
+        </a>
+        <a href="#hero" class="btn-primary btn-primary--sm stickybar__book">Забронировать</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BLOCK 1: Hero ===== -->
+  <section class="hero" id="hero">
+  <!-- <div class="hero__overlay" aria-hidden="true"></div> -->
+
+    <div class="hero__inner">
+      <header class="header">
+        <div class="container header__container reveal">
+          <a href="#hero" class="logo">
+            <img src="images/logo.png" alt="" class="logo__icon" width="44" height="44">
+            <img src="images/logo2.png" alt="Aktau Marina Bay" class="logo__wordmark" width="180" height="28">
+          </a>
+
+          <div class="header__actions">
+            <span class="lang-switch lang-switch--hero"><b>РУС</b> · ҚАЗ · ENG</span>
+            <button class="menu-btn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-menu">
+              <span class="menu-btn__lines">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
+            <a href="https://wa.me/77782395986" class="btn-outline" target="_blank" rel="noopener">
+              Связаться в WhatsApp
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div class="container hero__content">
+        <div class="hero__text">
+          <h1 class="hero__title reveal">Там, где море начинается у&nbsp;вашего порога</h1>
+          <p class="hero__subtitle reveal">
+            Остановитесь у самого моря. Комфортный отдых, деловые возможности
+            и инфраструктура курорта — в нескольких шагах от вашего номера.
+          </p>
+        </div>
+      </div>
+
+      <!-- Booking bar — внутри hero, на затемнённой части -->
+      <div class="booking">
+        <div class="container booking__container">
+          <button class="booking__field reveal" type="button" data-booking-trigger="checkin">
+            <div class="booking__field-body">
+              <span class="booking__label">Заезд</span>
+              <span class="booking__value" id="checkin-display">10.06.2026</span>
+            </div>
+            <svg class="booking__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+            </svg>
+            <input type="date" class="booking__input-hidden" id="checkin-input" value="2026-06-10" tabindex="-1" aria-hidden="true">
+          </button>
+
+          <button class="booking__field reveal" type="button" data-booking-trigger="checkout">
+            <div class="booking__field-body">
+              <span class="booking__label">Выезд</span>
+              <span class="booking__value" id="checkout-display">11.06.2026</span>
+            </div>
+            <svg class="booking__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+            </svg>
+            <input type="date" class="booking__input-hidden" id="checkout-input" value="2026-06-11" tabindex="-1" aria-hidden="true">
+          </button>
+
+          <button class="booking__field reveal" type="button" data-booking-trigger="guests" aria-expanded="false" aria-controls="guests-dropdown">
+            <div class="booking__field-body">
+              <span class="booking__label">Гости</span>
+              <span class="booking__value" id="guests-display">2 взрослых, 0 детей</span>
+            </div>
+            <svg class="booking__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </button>
+
+          <div class="booking__actions reveal">
+            <button class="booking__promo-btn" type="button" id="promo-toggle">У меня есть промокод</button>
+            <button class="btn-primary" type="button" id="booking-search">Найти номер</button>
+          </div>
+        </div>
+
+        <!-- Dropdown: гости -->
+        <div class="booking-dropdown" id="guests-dropdown" hidden>
+          <div class="booking-dropdown__row">
+            <span>Взрослые</span>
+            <div class="booking-dropdown__counter">
+              <button type="button" class="counter-btn" data-counter="adults" data-action="minus" aria-label="Меньше взрослых">−</button>
+              <span id="adults-count">2</span>
+              <button type="button" class="counter-btn" data-counter="adults" data-action="plus" aria-label="Больше взрослых">+</button>
+            </div>
+          </div>
+          <div class="booking-dropdown__row">
+            <span>Дети</span>
+            <div class="booking-dropdown__counter">
+              <button type="button" class="counter-btn" data-counter="children" data-action="minus" aria-label="Меньше детей">−</button>
+              <span id="children-count">0</span>
+              <button type="button" class="counter-btn" data-counter="children" data-action="plus" aria-label="Больше детей">+</button>
+            </div>
+          </div>
+          <button type="button" class="booking-dropdown__done" id="guests-done">Готово</button>
+        </div>
+
+        <!-- Dropdown: промокод -->
+        <div class="booking-dropdown booking-dropdown--promo" id="promo-dropdown" hidden>
+          <label class="booking-dropdown__promo-label" for="promo-input">Промокод</label>
+          <div class="booking-dropdown__promo-row">
+            <input type="text" id="promo-input" class="booking-dropdown__promo-input" placeholder="Введите код">
+            <button type="button" class="btn-primary btn-primary--sm" id="promo-apply">Применить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== МАКЕТ · BLOCK 2: Категории номеров (9 категорий, фильтр) ===== -->
+  <section class="rooms2" id="rooms">
+    <div class="container">
+      <header class="rooms2__header">
+        <div>
+          <h2 class="section-h">Номерной фонд</h2>
+          <p class="rooms2__stats"><b>42 номера</b> · 9 категорий · 3–5 этажи</p>
+        </div>
+        <p class="rooms2__standard">Во всех номерах: строгий интерьер с натуральной фактурой дерева, усиленная звукоизоляция, премиальные ортопедические матрасы, рабочая зона, Smart TV, высокоскоростной Wi‑Fi и электронная система доступа.</p>
+      </header>
+
+      <div class="room-filter" role="tablist" aria-label="Категории номеров">
+        <button class="room-filter__tab is-active" type="button" role="tab" aria-selected="true" data-filter="all">Все номера <span>9</span></button>
+        <button class="room-filter__tab" type="button" role="tab" aria-selected="false" data-filter="standard">Стандарты <span>5</span></button>
+        <button class="room-filter__tab" type="button" role="tab" aria-selected="false" data-filter="suite">Люксы и полулюксы <span>2</span></button>
+        <button class="room-filter__tab" type="button" role="tab" aria-selected="false" data-filter="connect">Семейные коннекты <span>2</span></button>
+      </div>
+
+      <div class="rooms2__grid">
+        <article class="rc" data-group="connect">
+          <div class="rc__media"><img src="images/rooms/4.webp" alt="" width="1024" height="576" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Executive Studio Connect</p>
+            <h3 class="rc__title">Представительский коннект-сьют</h3>
+            <ul class="rc__chips"><li>до 4 гостей</li><li>59,0 м²</li><li>5 этаж</li><li>2 санузла</li></ul>
+            <p class="rc__text">Флагманский двухкомнатный формат на 5-м этаже: угловая люкс-студия и смежный номер, объединённые внутренней двойной дверью. Для семей и VIP-гостей с сопровождением.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Представительский коннект-сьют">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="connect">
+          <div class="rc__media"><img src="images/rooms/3.webp" alt="" width="1024" height="576" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Family Connect Standard</p>
+            <h3 class="rc__title">Семейный коннект-стандарт</h3>
+            <ul class="rc__chips"><li>до 4 гостей</li><li>46,8 м²</li><li>5 этаж</li><li>2 санузла</li></ul>
+            <p class="rc__text">Два смежных номера на 5-м этаже, соединённые межкомнатной двойной дверью. Два санузла — для родителей с детьми или небольшой компании.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Семейный коннект-стандарт">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="suite">
+          <div class="rc__media"><img src="images/rooms/5.webp" alt="" width="1024" height="575" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Studio Executive</p>
+            <h3 class="rc__title">Люкс-Премьер</h3>
+            <ul class="rc__chips"><li>2 гостя + 1 доп.</li><li>41,9 м²</li><li>3–5 этажи</li></ul>
+            <p class="rc__text">Однокомнатный номер высшей категории с панорамным остеклением и выделенной гостевой зоной. Максимум воздуха и света на первой линии.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Люкс-Премьер">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="suite">
+          <div class="rc__media"><img src="images/rooms/4.webp" alt="" width="1024" height="576" loading="lazy" style="object-position: 0% 50%"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Junior Suite</p>
+            <h3 class="rc__title">Полулюкс</h3>
+            <ul class="rc__chips"><li>2 гостя + 1 доп.</li><li>33,2 м²</li><li>3–5 этажи</li></ul>
+            <p class="rc__text">Просторный номер с мягким зонированием спальни и гостиной. Баланс домашнего уюта, делового функционала и возможности доп. места.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Полулюкс">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="standard">
+          <div class="rc__media"><img src="images/rooms/2.webp" alt="" width="1024" height="575" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Superior Twin</p>
+            <h3 class="rc__title">Стандарт Плюс Twin</h3>
+            <ul class="rc__chips"><li>2 гостя</li><li>28,1 м²</li><li>2 раздельные кровати</li></ul>
+            <p class="rc__text">Номер увеличенной площади с двумя полноразмерными раздельными кроватями. Для деловых поездок, корпоративных команд и участников конференций.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Стандарт Плюс Twin">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="standard">
+          <div class="rc__media"><img src="images/rooms/1.webp" alt="" width="1024" height="575" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Superior Double</p>
+            <h3 class="rc__title">Стандарт Плюс Double</h3>
+            <ul class="rc__chips"><li>2 гостя</li><li>28,1 м²</li><li>кровать Double</li></ul>
+            <p class="rc__text">Однокомнатный номер увеличенной площади с большой двуспальной кроватью. Больше пространства для отдыха у моря или работы в командировке.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Стандарт Плюс Double">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="standard">
+          <div class="rc__media"><img src="images/rooms/3.webp" alt="" width="1024" height="576" loading="lazy" style="object-position: 100% 50%"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Standard Twin</p>
+            <h3 class="rc__title">Стандарт Улучшенный Twin</h3>
+            <ul class="rc__chips"><li>2 гостя</li><li>21,6 м²</li><li>2 раздельные кровати</li></ul>
+            <p class="rc__text">Базовый номер с двумя раздельными односпальными кроватями. Рациональная планировка для совместных командировок и экскурсионных туров.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Стандарт Улучшенный Twin">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="standard">
+          <div class="rc__media"><img src="images/rooms/1.webp" alt="" width="1024" height="575" loading="lazy" style="object-position: 100% 50%"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Standard Double</p>
+            <h3 class="rc__title">Стандарт Улучшенный Double</h3>
+            <ul class="rc__chips"><li>2 гостя</li><li>22,0–28,1 м²</li><li>кровать Double</li></ul>
+            <p class="rc__text">Классический номер с большой двуспальной кроватью — самая популярная категория отеля. Для знакомства с Актау, деловых визитов и уикенда у моря.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Стандарт Улучшенный Double">Выбрать</button></div>
+          </div>
+        </article>
+
+        <article class="rc" data-group="standard">
+          <div class="rc__media"><img src="images/rooms/1.webp" alt="" width="1024" height="575" style="object-position: 15% 50%" loading="lazy"><span class="rc__badge">Временное фото</span></div>
+          <div class="rc__body">
+            <p class="rc__en">Standard Compact</p>
+            <h3 class="rc__title">Стандарт Компакт</h3>
+            <ul class="rc__chips"><li>1–2 гостя</li><li>20,4 м²</li><li>3–5 этажи</li></ul>
+            <p class="rc__text">Эргономичный номер для индивидуального размещения: полноценное спальное место, рабочий стол, Smart TV и современный санузел.</p>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span> / ночь</p><button class="rc__btn" type="button" data-room-name="Стандарт Компакт">Выбрать</button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== МАКЕТ · BLOCK 3: Преимущества (один блок вместо двух) ===== -->
+  <section class="why" id="why">
+    <img class="why__decor" src="images/line.png" alt="" width="1303" height="1296" loading="lazy" aria-hidden="true">
+
+    <div class="container why__body">
+      <h2 class="why__title">Почему гости выбирают Aktau Marina Bay</h2>
+
+      <div class="why__grid">
+      <div class="why__visual">
+        <div class="why__gallery">
+          <img class="why__photo why__photo--1" src="images/why-1.webp" alt="Набережная Актау на закате" width="1678" height="1175" loading="lazy">
+          <img class="why__photo why__photo--2" src="images/why-2.webp" alt="Панорамный ресторан отеля" width="1312" height="898" loading="lazy">
+          <img class="why__photo why__photo--3" src="images/why-3.webp" alt="Яхты у пирса Marina Bay" width="1123" height="1195" loading="lazy">
+        </div>
+      </div>
+
+      <div class="why__content">
+        <ul class="why__list">
+          <li class="why__item">
+            <span class="why__num">01</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Первая линия и собственный пирс</h3>
+              <p class="why__item-text">Панорамные виды на Каспий, пляж и морские прогулки в нескольких шагах от номера</p>
+            </div>
+          </li>
+          <li class="why__item">
+            <span class="why__num">02</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Завтраки каждый день</h3>
+              <p class="why__item-text">Формат: <span class="ph">шведский стол / меню</span> · <span class="ph">с … до …</span> · <span class="ph">включены или … ₸</span></p>
+            </div>
+          </li>
+          <li class="why__item">
+            <span class="why__num">03</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Трансфер из аэропорта Актау</h3>
+              <p class="why__item-text">Встреча по номеру рейса · <span class="ph">… ₸</span> · заказ при бронировании</p>
+            </div>
+          </li>
+          <li class="why__item">
+            <span class="why__num">04</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Туры по Мангистау</h3>
+              <p class="why__item-text">Бозжыра, Бекет-Ата, морская рыбалка — с партнёром отеля</p>
+            </div>
+          </li>
+          <li class="why__item">
+            <span class="why__num">05</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Fit Revolution</h3>
+              <p class="why__item-text">Центр биохакинга: кислородные тренировки, Red Light, PEMF</p>
+            </div>
+          </li>
+          <li class="why__item">
+            <span class="why__num">06</span>
+            <span class="why__divider" aria-hidden="true"></span>
+            <div class="why__item-body">
+              <h3 class="why__item-title">Панорамный ресторан</h3>
+              <p class="why__item-text">Завтраки, деловые встречи и торжества с видом на море</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== МАКЕТ · BLOCK 4: Спецпредложения (новый) ===== -->
+  <section class="offers" id="offers">
+    <div class="container">
+      <header class="offers__header">
+        <h2 class="section-h">Специальные предложения</h2>
+        <p class="offers__lead">Пакеты проживания: что входит, сроки и условия. Названия и наполнение ниже — примеры, тексты и цены даёт отель.</p>
+      </header>
+      <div class="offers__grid">
+        <article class="offer">
+          <div class="offer__media"><img src="images/why-1.webp" alt="" width="1678" height="1175" loading="lazy"><span class="rc__badge">Пример</span></div>
+          <div class="offer__body">
+            <h3 class="offer__title">Выходные у Каспия</h3>
+            <ul class="offer__list">
+              <li>Проживание: <span class="ph">… ночи</span></li>
+              <li>Завтрак: <span class="ph">включён</span></li>
+              <li>Поздний выезд: <span class="ph">до … :00</span></li>
+              <li>Действует: <span class="ph">… — …</span></li>
+            </ul>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span></p><button class="rc__btn" type="button" data-room-name="Выходные у Каспия">Забронировать</button></div>
+          </div>
+        </article>
+        <article class="offer">
+          <div class="offer__media"><img src="images/bio-1.webp" alt="" width="1024" height="713" loading="lazy"><span class="rc__badge">Пример</span></div>
+          <div class="offer__body">
+            <h3 class="offer__title">Перезагрузка с Fit Revolution</h3>
+            <ul class="offer__list">
+              <li>Проживание: <span class="ph">… ночи</span></li>
+              <li>Процедуры: <span class="ph">… сеанса</span></li>
+              <li>Завтрак: <span class="ph">включён</span></li>
+              <li>Действует: <span class="ph">… — …</span></li>
+            </ul>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span></p><button class="rc__btn" type="button" data-room-name="Перезагрузка с Fit Revolution">Забронировать</button></div>
+          </div>
+        </article>
+        <article class="offer">
+          <div class="offer__media"><img src="images/discover/bozzhyra.webp" alt="" width="370" height="850" loading="lazy"><span class="rc__badge">Пример</span></div>
+          <div class="offer__body">
+            <h3 class="offer__title">Отель + тур по Мангистау</h3>
+            <ul class="offer__list">
+              <li>Проживание: <span class="ph">… ночи</span></li>
+              <li>Тур партнёра: <span class="ph">промокод …%</span></li>
+              <li>Трансфер: <span class="ph">включён</span></li>
+              <li>Действует: <span class="ph">… — …</span></li>
+            </ul>
+            <div class="rc__foot"><p class="rc__price">от <span class="ph">… ₸</span></p><button class="rc__btn" type="button" data-room-name="Отель + тур по Мангистау">Забронировать</button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 5: Центр биохакинга ===== -->
+  <section class="bio" id="biohacking">
+    <div class="container bio__body">
+      <h2 class="bio__title">ЦЕНТР БИОХАКИНГА<br>FIT REVOLUTION</h2>
+
+      <div class="bio__grid">
+        <div class="bio__visual">
+          <div class="bio__gallery">
+            <img class="bio__photo bio__photo--1" src="images/bio-1.webp" alt="Криотерапия в Fit Revolution" width="1024" height="713" loading="lazy">
+            <img class="bio__photo bio__photo--2" src="images/bio-2.webp" alt="Red Light терапия" width="820" height="1024" loading="lazy">
+            <img class="bio__photo bio__photo--3" src="images/bio-3.webp" alt="Кардио-тренировки в кислородной маске" width="1024" height="700" loading="lazy">
+          </div>
+        </div>
+
+        <div class="bio__content">
+          <h3 class="bio__heading">Инновационный фитнес для избранных.</h3>
+          <p class="bio__lead">Протокол тренировок, доступный ранее лишь топовым атлетам, чемпионам и суперзвездам из США, теперь открыт для гостей нашего комплекса.</p>
+          <p class="bio__text">Мы привезли новейшее американское оборудование и создали процедурные кабинеты, которые помогут вам оставаться:</p>
+          <ul class="bio__list">
+            <li>здоровыми</li>
+            <li>стрессоустойчивыми</li>
+            <li>продуктивными</li>
+            <li>сконцентрированными</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 6: Услуги Fit Revolution ===== -->
+  <section class="services" id="services">
+    <div class="container">
+      <header class="services__header">
+        <h2 class="services__heading reveal">Больше энергии. Лучшее восстановление.<br>Максимальная продуктивность.</h2>
+      </header>
+
+      <div class="services__carousel" id="services-carousel">
+        <button class="services__arrow services__arrow--prev" type="button" aria-label="Предыдущая услуга">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+
+        <div class="services__viewport">
+          <div class="services__track" id="services-track">
+          <div class="services__slide">
+          <article class="services__card">
+            <img class="services__icon" src="images/icon-fit-1.png" alt="" width="138" height="109" loading="lazy">
+            <div class="services__body">
+              <h3 class="services__title">Кардио-тренировки в&nbsp;кислородной маске</h3>
+              <p class="services__meta"><span class="ph">… мин</span> · от <span class="ph">… ₸</span></p>
+              <p class="services__text">Использование велотренажеров ASSAULT в&nbsp;сочетании с&nbsp;вдыханием воздуха с&nbsp;95% кислорода. Повышает выносливость, ускоряет метаболизм, сжигает жир и&nbsp;исключает мышечную усталость (вывод молочной кислоты).</p>
+            </div>
+          </article>
+          </div>
+
+          <div class="services__slide">
+          <article class="services__card">
+            <img class="services__icon" src="images/icon-fit-2.png" alt="" width="110" height="109" loading="lazy">
+            <div class="services__body">
+              <h3 class="services__title">Инфракрасный свет (Red Light)</h3>
+              <p class="services__meta"><span class="ph">… мин</span> · от <span class="ph">… ₸</span></p>
+              <p class="services__text">Стимулирует клеточный метаболизм, глубоко проникает в&nbsp;ткани, снижает общую усталость и&nbsp;заряжает энергией. Дополнительно активирует выработку коллагена, омолаживая кожу.</p>
+            </div>
+          </article>
+          </div>
+
+          <div class="services__slide">
+          <article class="services__card">
+            <img class="services__icon" src="images/icon-fit-3.png" alt="" width="110" height="110" loading="lazy">
+            <div class="services__body">
+              <h3 class="services__title">PEMF Mat (Пульсирующий электромагнит)</h3>
+              <p class="services__meta"><span class="ph">… мин</span> · от <span class="ph">… ₸</span></p>
+              <p class="services__text">Уменьшает напряжение в&nbsp;суставах и&nbsp;мышцах. Помогает расслабиться, укрепляет опорно-двигательный аппарат и&nbsp;восстанавливает циркадные ритмы для здорового сна.</p>
+            </div>
+          </article>
+          </div>
+
+          </div>
+        </div>
+
+        <button class="services__arrow services__arrow--next" type="button" aria-label="Следующая услуга">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 7: Ресторан ===== -->
+  <section class="restaurant" id="restaurant">
+    <div class="restaurant__bg" aria-hidden="true"></div>
+    <div class="restaurant__shade" aria-hidden="true"></div>
+
+    <div class="restaurant__layout">
+      <div class="restaurant__main">
+        <div class="restaurant__main-inner">
+          <h2 class="restaurant__heading">Панорамный ресторан<br>над Каспием</h2>
+          <p class="restaurant__intro">Ресторан на&nbsp;верхнем этаже комплекса открывает панорамные виды на&nbsp;Каспийское море, яхт-клуб, Скальную тропу и&nbsp;побережье Актау.</p>
+          <p class="restaurant__intro">Изысканная кухня и&nbsp;высокий уровень сервиса создают идеальную атмосферу для завтраков, деловых встреч, романтических ужинов и&nbsp;торжественных мероприятий.</p>
+        </div>
+      </div>
+
+      <aside class="restaurant__panel">
+        <div class="restaurant__panel-inner">
+        <ul class="restaurant__list">
+          <li class="restaurant__item">
+            <span class="restaurant__num">01</span>
+            <span class="restaurant__divider" aria-hidden="true"></span>
+            <div class="restaurant__item-body">
+              <h3 class="restaurant__item-title">Панорамный вид на&nbsp;море</h3>
+              <p class="restaurant__item-text">Потрясающий обзор на&nbsp;Каспий, яхт-клуб и&nbsp;знаменитую Скальную тропу из&nbsp;любой точки зала</p>
+            </div>
+          </li>
+          <li class="restaurant__item">
+            <span class="restaurant__num">02</span>
+            <span class="restaurant__divider" aria-hidden="true"></span>
+            <div class="restaurant__item-body">
+              <h3 class="restaurant__item-title">VIP-кабинеты для приватных встреч</h3>
+              <p class="restaurant__item-text">Уединённые VIP-зоны с&nbsp;панорамными окнами для деловых встреч и&nbsp;камерных мероприятий</p>
+            </div>
+          </li>
+          <li class="restaurant__item">
+            <span class="restaurant__num">03</span>
+            <span class="restaurant__divider" aria-hidden="true"></span>
+            <div class="restaurant__item-body">
+              <h3 class="restaurant__item-title">Идеальная площадка для торжеств</h3>
+              <p class="restaurant__item-text">Безупречные условия для проведения свадеб, корпоративов, юбилеев и&nbsp;семейных торжеств</p>
+            </div>
+          </li>
+          <li class="restaurant__item">
+            <span class="restaurant__num">04</span>
+            <span class="restaurant__divider" aria-hidden="true"></span>
+            <div class="restaurant__item-body">
+              <h3 class="restaurant__item-title">Вкусная кухня и&nbsp;высокий сервис</h3>
+              <p class="restaurant__item-text">Изысканная кухня и&nbsp;безупречный сервис для особых впечатлений</p>
+            </div>
+          </li>
+        </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 8: Бизнес ===== -->
+  <section class="business" id="business">
+    <div class="business__bg" aria-hidden="true"></div>
+
+    <div class="container business__inner">
+      <h2 class="business__heading">Пространство, где команды становятся сильнее, а&nbsp;идеи находят развитие</h2>
+      <p class="business__intro">Комплекс разработан с&nbsp;учётом строгих требований предпринимателей, топ-менеджеров, корпоративных клиентов и&nbsp;сообществ. Здесь созданы идеальные условия для работы, развития и&nbsp;networking.</p>
+
+      <div class="business__tabbed">
+          <div class="business__tabs" role="tablist" aria-label="Направления">
+            <button
+              class="business__tab is-active"
+              type="button"
+              role="tab"
+              id="business-tab-business"
+              aria-selected="true"
+              aria-controls="business-panel-business"
+            >
+              <svg class="business__tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M8 7V5.5A2.5 2.5 0 0110.5 3h3A2.5 2.5 0 0116 5.5V7" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M3 12h18" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M12 12v3.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M10.5 14.5h3" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+              Для бизнеса
+            </button>
+          </div>
+
+          <div class="business__panels">
+            <div
+              class="business__panel is-active"
+              role="tabpanel"
+              id="business-panel-business"
+              aria-labelledby="business-tab-business"
+              aria-hidden="false"
+            >
+              <div class="business__cards">
+                <article class="business__card">
+                  <img class="business__card-icon" src="images/icon-biz-1.png" alt="" width="72" height="72" loading="lazy">
+                  <span class="business__divider" aria-hidden="true"></span>
+                  <h3 class="business__card-title">Современный конференц-зал</h3>
+                  <p class="business__card-text">Мультимедийное пространство для тренингов, презентаций и&nbsp;корпоративных мероприятий</p>
+                </article>
+                <article class="business__card">
+                  <img class="business__card-icon" src="images/icon-biz-2.png" alt="" width="72" height="72" loading="lazy">
+                  <span class="business__divider" aria-hidden="true"></span>
+                  <h3 class="business__card-title">Пространство для переговоров</h3>
+                  <p class="business__card-text">Зоны в&nbsp;лобби с&nbsp;мягкими креслами для неформальных деловых встреч</p>
+                </article>
+                <article class="business__card">
+                  <img class="business__card-icon" src="images/icon-biz-3.png" alt="" width="72" height="72" loading="lazy">
+                  <span class="business__divider" aria-hidden="true"></span>
+                  <h3 class="business__card-title">Высокоскоростной интернет</h3>
+                  <p class="business__card-text">Стабильное высокоскоростное подключение по&nbsp;всему комплексу</p>
+                </article>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      <div class="hall-facts">
+        <p class="hall-facts__title">Конференц-зал</p>
+        <ul class="hall-facts__list">
+          <li><b><span class="ph">…</span> м²</b>площадь</li>
+          <li><b><span class="ph">…</span></b>театр</li>
+          <li><b><span class="ph">…</span></b>класс</li>
+          <li><b><span class="ph">…</span></b>банкет</li>
+          <li><b>проектор, звук</b>оборудование</li>
+        </ul>
+        <a class="btn-primary btn-primary--sm" href="#location">Оставить заявку</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 9: Откройте Мангистау ===== -->
+  <section class="discover" id="concierge">
+    <div class="discover__bg" aria-hidden="true"></div>
+    <div class="discover__shade" aria-hidden="true"></div>
+
+    <div class="container discover__inner">
+      <h2 class="discover__heading">Туры по Мангистау</h2>
+      <p class="discover__intro">Aktau Marina Bay&nbsp;&mdash; это не&nbsp;только комфортный отдых у&nbsp;моря, но&nbsp;и&nbsp;отправная точка для знакомства с&nbsp;уникальной природой, историей и&nbsp;культурой Мангистау.</p>
+      <p class="discover__intro">Туры проводит партнёр отеля&nbsp;— <span class="ph">ТОО «…»</span>, лицензия <span class="ph">№ …</span>. Бронирование и&nbsp;оплата&nbsp;— у&nbsp;организатора, для гостей отеля&nbsp;— <span class="ph">промокод</span>.</p>
+    </div>
+
+    <div class="discover__carousel" id="discover-carousel">
+      <button class="discover__arrow discover__arrow--prev" type="button" aria-label="Предыдущая карточка">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+
+      <div class="container discover__carousel-inner">
+        <div class="discover__viewport">
+          <div class="discover__track" id="discover-track">
+            <article class="discover__card">
+              <img class="discover__card-bg" src="images/discover/bozzhyra.webp" alt="" width="370" height="850" loading="lazy">
+              <div class="discover__card-overlay" aria-hidden="true"></div>
+              <div class="discover__card-content">
+                <h3 class="discover__card-title">Экскурсии в&nbsp;урочище Бозжыра</h3>
+                <p class="discover__card-text">Путешествие к&nbsp;одному из&nbsp;самых впечатляющих природных символов Казахстана с&nbsp;панорамными видами на&nbsp;величественные меловые скалы и&nbsp;бескрайние просторы Мангистау. Уникальные ландшафты и&nbsp;захватывающие смотровые площадки делают эту поездку незабываемым впечатлением для каждого гостя.</p>
+                <p class="discover__card-meta"><span class="ph">… ч</span> · от <span class="ph">… ₸</span></p>
+                <a class="discover__card-btn" href="#concierge">Подробнее у организатора →</a>
+              </div>
+            </article>
+
+            <article class="discover__card">
+              <img class="discover__card-bg" src="images/discover/beket-ata.webp" alt="" width="370" height="850" loading="lazy">
+              <div class="discover__card-overlay" aria-hidden="true"></div>
+              <div class="discover__card-content">
+                <h3 class="discover__card-title">Посещение Бекет-Ата</h3>
+                <p class="discover__card-text">Паломничество к&nbsp;святыне и&nbsp;поездка к&nbsp;одному из&nbsp;главных духовных мест Мангистау с&nbsp;потрясающими видами на&nbsp;скалистое побережье</p>
+                <p class="discover__card-meta"><span class="ph">… ч</span> · от <span class="ph">… ₸</span></p>
+                <a class="discover__card-btn" href="#concierge">Подробнее у организатора →</a>
+              </div>
+            </article>
+
+            <article class="discover__card">
+              <img class="discover__card-bg" src="images/discover/fishing.webp" alt="" width="370" height="850" loading="lazy">
+              <div class="discover__card-overlay" aria-hidden="true"></div>
+              <div class="discover__card-content">
+                <h3 class="discover__card-title">Морская рыбалка и&nbsp;прогулки</h3>
+                <p class="discover__card-text">Морские прогулки и&nbsp;рыбалка в&nbsp;Каспийском море с&nbsp;опытными гидами&nbsp;&mdash; отдых на&nbsp;воде и&nbsp;свежий улов</p>
+                <p class="discover__card-meta"><span class="ph">… ч</span> · от <span class="ph">… ₸</span></p>
+                <a class="discover__card-btn" href="#concierge">Подробнее у организатора →</a>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+
+      <button class="discover__arrow discover__arrow--next" type="button" aria-label="Следующая карточка">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== МАКЕТ: Отзывы (новый блок) ===== -->
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <header class="reviews__header">
+        <h2 class="section-h">Отзывы гостей</h2>
+        <p class="reviews__rating"><b><span class="ph">…</span> / 5</b> · 2ГИС · Google · Booking</p>
+      </header>
+      <div class="reviews__grid">
+        <article class="review"><p class="review__stars">★★★★★</p><p class="review__text">Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.</p><p class="review__who"><span class="ph">Имя гостя</span> · <span class="ph">месяц, год</span> · 2ГИС</p></article>
+        <article class="review"><p class="review__stars">★★★★★</p><p class="review__text">Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.</p><p class="review__who"><span class="ph">Имя гостя</span> · <span class="ph">месяц, год</span> · Google</p></article>
+        <article class="review"><p class="review__stars">★★★★★</p><p class="review__text">Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.</p><p class="review__who"><span class="ph">Имя гостя</span> · <span class="ph">месяц, год</span> · Booking</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 10: Расположение ===== -->
+  <section class="location" id="location">
+    <div class="container">
+      <h2 class="section-h location__h">Как нас найти</h2>
+    </div>
+    <div class="container location__layout">
+      <div class="location__list-wrap">
+        <ul class="location__list">
+          <li>
+            <button
+              class="location__item"
+              type="button"
+              data-lon="51.1685"
+              data-lat="43.6560"
+              data-zoom="15"
+              aria-pressed="false"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Акимат города Актау</span>
+                <span class="location__item-text">для гостей, приезжающих по&nbsp;деловым вопросам</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-walk.png" alt="" width="28" height="40" loading="lazy">
+                <span class="location__item-time">5&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="location__item"
+              type="button"
+              data-lon="51.1758"
+              data-lat="43.6442"
+              data-zoom="15"
+              aria-pressed="false"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Парк «Акбота»</span>
+                <span class="location__item-text">для семей и&nbsp;прогулок на&nbsp;смотровых площадках</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-walk.png" alt="" width="28" height="40" loading="lazy">
+                <span class="location__item-time">7&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="location__item"
+              type="button"
+              data-lon="51.1680"
+              data-lat="43.6265"
+              data-zoom="15"
+              aria-pressed="false"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Скальная тропа</span>
+                <span class="location__item-text">для активного отдыха и&nbsp;необычных фото</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-walk.png" alt="" width="28" height="40" loading="lazy">
+                <span class="location__item-time">4&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="location__item"
+              type="button"
+              data-lon="51.1722"
+              data-lat="43.6481"
+              data-zoom="14"
+              aria-pressed="false"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Центр города</span>
+                <span class="location__item-text">главные улицы, набережная и&nbsp;инфраструктура</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-car.png" alt="" width="36" height="36" loading="lazy">
+                <span class="location__item-time">6&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="location__item is-active"
+              type="button"
+              data-lon="51.1743"
+              data-lat="43.6305"
+              data-zoom="16"
+              aria-pressed="true"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Собственный пляж и&nbsp;пирс</span>
+                <span class="location__item-text">для отдыха у&nbsp;моря без транспорта и&nbsp;переездов</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-walk.png" alt="" width="28" height="40" loading="lazy">
+                <span class="location__item-time">1&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button
+              class="location__item"
+              type="button"
+              data-lon="51.172663"
+              data-lat="43.630253"
+              data-zoom="16"
+              aria-pressed="false"
+            >
+              <span class="location__item-main">
+                <span class="location__item-title">Яхт-клуб</span>
+                <span class="location__item-text">морские прогулки и&nbsp;активный отдых</span>
+              </span>
+              <span class="location__item-meta">
+                <img class="location__item-icon" src="images/icon-loc-walk.png" alt="" width="28" height="40" loading="lazy">
+                <span class="location__item-time">2&nbsp;мин</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="location__map-wrap">
+        <div class="location__map map-ph">
+          <div class="map-ph__pin" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s7-5.2 7-11a7 7 0 10-14 0c0 5.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <p class="map-ph__title">Карта 2ГИС или Яндекс по ключу</p>
+          <p class="map-ph__text">Без сторонней рекламы · метка на отеле · кнопка «Построить маршрут»</p>
+        </div>
+
+        <div class="location__contacts">
+          <p class="location__contact">
+            <svg class="location__contact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 21s7-5.2 7-11a7 7 0 10-14 0c0 5.8 7 11 7 11z" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <span>г.&nbsp;Актау, Микрорайон 4А,&nbsp;55. Из аэропорта&nbsp;— <span class="ph">… мин</span>, парковка&nbsp;— <span class="ph">…</span></span>
+          </p>
+          <p class="location__contact">
+            <svg class="location__contact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6.5 4h3l1.5 5-2.2 1.2a12 12 0 005.5 5.5L14.5 14 19.5 15.5V19a2 2 0 01-2 2C9.8 21 3 14.2 3 6.5A2.5 2.5 0 015.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <a href="tel:+77782395986">+7&nbsp;(778)&nbsp;239-59-86</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <a href="#hero" class="logo site-footer__logo">
+        <img src="images/logo.png" alt="" class="logo__icon" width="44" height="44">
+        <img src="images/logo2.png" alt="Aktau Marina Bay" class="logo__wordmark" width="180" height="28">
+      </a>
+
+      <nav class="site-footer__nav" aria-label="Навигация в подвале">
+        <ul class="site-footer__nav-list">
+          <li><a href="#rooms">Номера</a></li>
+          <li><a href="#why">Почему мы</a></li>
+          <li><a href="#offers">Спецпредложения</a></li>
+          <li><a href="#biohacking">Fit Revolution</a></li>
+          <li><a href="#restaurant">Ресторан</a></li>
+          <li><a href="#business">Бизнес</a></li>
+          <li><a href="#concierge">Туры по Мангистау</a></li>
+          <li><a href="#location">Контакты</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__contact">
+        <a href="https://wa.me/77782395986" class="btn-outline site-footer__whatsapp" target="_blank" rel="noopener">
+          Связаться в WhatsApp
+        </a>
+        <div class="site-footer__socials">
+          <a href="https://wa.me/77782395986" class="site-footer__social" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+          <a href="https://t.me/" class="site-footer__social" target="_blank" rel="noopener" aria-label="Telegram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="https://instagram.com/" class="site-footer__social" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://vk.com/" class="site-footer__social" target="_blank" rel="noopener" aria-label="VK">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.391 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.525-2.049-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.512 2.303 4.717 2.896 4.717.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.049.17.49-.085.744-.576.744z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="site-footer__legal">
+        <p>©&nbsp;Aktau Marina Bay</p>
+        <p>Все права защищены</p>
+      </div>
+    </div>
+
+    <div class="container footer-req">
+      <div class="footer-req__col">
+        <p class="footer-req__h">Реквизиты</p>
+        <p><span class="ph">ИП / ТОО «…»</span></p>
+        <p>БИН/ИИН: <span class="ph">…</span></p>
+        <p>Юр. адрес: <span class="ph">…</span></p>
+        <p>Банк: <span class="ph">…</span>, БИК <span class="ph">…</span>, ИИК <span class="ph">…</span></p>
+      </div>
+      <div class="footer-req__col">
+        <p class="footer-req__h">Документы</p>
+        <a href="#">Договор-оферта (RU / ҚАЗ)</a>
+        <a href="#">Правила проживания</a>
+        <a href="#">Правила онлайн-бронирования</a>
+        <a href="#">Отмена и возврат</a>
+        <a href="#">Политика конфиденциальности</a>
+      </div>
+      <div class="footer-req__col">
+        <p class="footer-req__h">Принимаем к оплате</p>
+        <div class="pay-chips"><span>VISA</span><span>Mastercard</span><span>МИР</span></div>
+        <p class="footer-req__note">Цены указаны в тенге (KZT)</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Просмотр фото">
+    <button class="lightbox__close" type="button" aria-label="Закрыть">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <img class="lightbox__img" id="lightbox-img" alt="">
+  </div>
+
+  <!-- Выпадающее меню -->
+  <div class="menu-overlay" id="menu-overlay" hidden></div>
+  <nav class="site-menu" id="site-menu" aria-label="Главное меню" hidden>
+    <button class="site-menu__close" type="button" aria-label="Закрыть меню">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <a href="#hero" class="logo logo--menu">
+      <img src="images/logo.png" alt="" class="logo__icon" width="36" height="36">
+      <img src="images/logo2.png" alt="Aktau Marina Bay" class="logo__wordmark" width="160" height="24">
+    </a>
+
+    <ul class="site-menu__nav">
+      <li><a href="#rooms">Номера</a></li>
+      <li><a href="#why">Почему мы</a></li>
+      <li><a href="#offers">Спецпредложения</a></li>
+      <li><a href="#biohacking">Fit Revolution</a></li>
+      <li><a href="#restaurant">Ресторан</a></li>
+      <li><a href="#business">Бизнес</a></li>
+      <li><a href="#concierge">Туры по Мангистау</a></li>
+      <li><a href="#location">Контакты</a></li>
+    </ul>
+
+    <a href="tel:+77782395986" class="site-menu__phone">+7 (778) 239-59-86</a>
+
+    <div class="site-menu__socials">
+      <a href="https://wa.me/77782395986" class="site-menu__social" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+      <a href="https://t.me/" class="site-menu__social" target="_blank" rel="noopener" aria-label="Telegram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </a>
+      <a href="https://instagram.com/" class="site-menu__social" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="https://vk.com/" class="site-menu__social" target="_blank" rel="noopener" aria-label="VK">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.391 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.525-2.049-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.512 2.303 4.717 2.896 4.717.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.049.17.49-.085.744-.576.744z"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Toast для демо -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/main.js"></script>
+  <script src="js/mockup.js"></script>
+</body>
+</html>
