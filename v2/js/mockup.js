@@ -83,7 +83,7 @@
       if (mobile.matches) {
         sheet.classList.add('is-open');
         overlay.hidden = false;
-        document.body.classList.add('menu-open');
+        document.body.classList.add('menu-open', 'dates-open');
         sheet.querySelector('[data-booking-trigger="checkin"]')?.focus({ preventScroll: true });
       } else {
         document.getElementById('hero').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
@@ -94,7 +94,7 @@
     function close() {
       sheet.classList.remove('is-open');
       overlay.hidden = true;
-      document.body.classList.remove('menu-open');
+      document.body.classList.remove('menu-open', 'dates-open');
     }
 
     document.querySelectorAll('[data-open-dates]').forEach((el) => {
@@ -375,6 +375,113 @@
     });
   }
 
+  // Телефон: всплывающие окна закрываются смахиванием вниз (меню — ещё и вправо), а не только крестиком.
+  // Окно едет за пальцем; если отпустить раньше порога — возвращается на место.
+  // Если содержимое окна прокручено вниз, палец сначала прокручивает его, а смахивание работает от самого верха.
+  function addSwipeClose(panel, { isActive, close, axes = ['down'] }) {
+    const THRESHOLD = 90;
+    let x0 = 0;
+    let y0 = 0;
+    let t0 = 0;
+    let dx = 0;
+    let dy = 0;
+    let axis = null;
+    let tracking = false;
+    let scrolled = false;
+
+    // внутри окна есть прокрученный блок — тогда движение вниз отдаём прокрутке
+    function insideScrolled(el) {
+      for (let n = el; n && n !== panel.parentElement; n = n.parentElement) {
+        if (n.scrollTop > 0 && n.scrollHeight > n.clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(n).overflowY)) return true;
+        if (n === panel) break;
+      }
+      return false;
+    }
+
+    function reset(delay) {
+      setTimeout(() => {
+        panel.style.transition = '';
+        panel.style.transform = '';
+      }, delay);
+    }
+
+    panel.addEventListener('touchstart', (e) => {
+      if (!mobile.matches || !isActive() || e.touches.length !== 1) return;
+      if (e.target.closest('input, textarea, select')) return;
+      tracking = true;
+      axis = null;
+      dx = 0;
+      dy = 0;
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+      t0 = performance.now();
+      scrolled = insideScrolled(e.target);
+    }, { passive: true });
+
+    panel.addEventListener('touchmove', (e) => {
+      if (!tracking) return;
+      dx = e.touches[0].clientX - x0;
+      dy = e.touches[0].clientY - y0;
+      if (!axis) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dy) >= Math.abs(dx)) axis = dy > 0 && axes.includes('down') && !scrolled ? 'y' : 'none';
+        else axis = dx > 0 && axes.includes('right') ? 'x' : 'none';
+        if (axis === 'none') {
+          tracking = false;
+          return;
+        }
+        panel.style.transition = 'none';
+      }
+      e.preventDefault();
+      const d = Math.max(0, axis === 'y' ? dy : dx);
+      panel.style.transform = axis === 'y' ? `translateY(${d}px)` : `translateX(${d}px)`;
+    }, { passive: false });
+
+    function end() {
+      if (!tracking) return;
+      tracking = false;
+      if (!axis || axis === 'none') return;
+      const d = Math.max(0, axis === 'y' ? dy : dx);
+      const speed = d / Math.max(1, performance.now() - t0);
+      panel.style.transition = 'transform 0.25s ease';
+      if (d > THRESHOLD || (d > 30 && speed > 0.6)) {
+        panel.style.transform = axis === 'y' ? 'translateY(110%)' : 'translateX(110%)';
+        setTimeout(close, 200);
+        reset(600);
+      } else {
+        panel.style.transform = '';
+        reset(260);
+      }
+    }
+
+    panel.addEventListener('touchend', end);
+    panel.addEventListener('touchcancel', end);
+  }
+
+  function initSwipeClose() {
+    const dialog = document.getElementById('room-dialog');
+    if (dialog) {
+      addSwipeClose(dialog, { isActive: () => dialog.open, close: () => dialog.close() });
+    }
+
+    const sheet = document.getElementById('booking-sheet');
+    if (sheet) {
+      addSwipeClose(sheet, {
+        isActive: () => sheet.classList.contains('is-open'),
+        close: () => sheet.querySelector('[data-close-dates]')?.click(),
+      });
+    }
+
+    const menu = document.getElementById('site-menu');
+    if (menu) {
+      addSwipeClose(menu, {
+        isActive: () => menu.classList.contains('is-open'),
+        close: () => menu.querySelector('.site-menu__close')?.click(),
+        axes: ['down', 'right'],
+      });
+    }
+  }
+
   // Документы в подвале — пока заглушки: не прыгаем наверх страницы, а показываем подсказку
   function initDocLinks() {
     document.querySelectorAll('.footer-req a[href="#"]').forEach((a) => {
@@ -428,7 +535,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    [initStickyBar, initDatesSheet, initRoomTabs, initRoomDialog, initBookButtons, initShimmer, initFindUs, initCarousels, initDocLinks, initContacts, initSlides].forEach((init) => {
+    [initStickyBar, initDatesSheet, initRoomTabs, initRoomDialog, initBookButtons, initShimmer, initFindUs, initCarousels, initDocLinks, initContacts, initSwipeClose, initSlides].forEach((init) => {
       try {
         init();
       } catch (err) {

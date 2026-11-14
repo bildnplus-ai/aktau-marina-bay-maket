@@ -2502,3 +2502,57 @@ html {
     justify-content: center;
   }
 }
+
+/* ---------- v6: ручка-полоска у окон снизу — подсказка, что окно можно смахнуть вниз ---------- */
+.sheet-grip {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .room-dialog .sheet-grip,
+  .booking.is-open .sheet-grip {
+    display: block;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    z-index: 4;
+    width: 44px;
+    height: 5px;
+    margin-left: -22px;
+    border-radius: 3px;
+    background: rgba(243, 240, 233, 0.6);
+    box-shadow: 0 0 6px rgba(3, 10, 12, 0.5);
+    pointer-events: none;
+  }
+
+  .hero .booking.is-open {
+    padding-top: 24px;
+  }
+
+  /* окна не дёргают страницу под собой при смахивании */
+  .room-dialog,
+  .booking.is-open,
+  .site-menu {
+    overscroll-behavior: contain;
+  }
+}
+
+/* выбор дат на телефоне: панель лежит внутри первого экрана, а затемнение — поверх страницы,
+   и затемнение перехватывало все нажатия по панели. Пока панель открыта, первый экран поднимается
+   над затемнением, а его остальное содержимое приглушается так же, как остальная страница. */
+@media (max-width: 900px) {
+  body.dates-open .hero__inner {
+    z-index: 141;
+    pointer-events: none;
+  }
+
+  body.dates-open .hero__inner > .booking {
+    pointer-events: auto;
+  }
+
+  body.dates-open .hero__inner > :not(.booking) {
+    opacity: 0.25;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+}
