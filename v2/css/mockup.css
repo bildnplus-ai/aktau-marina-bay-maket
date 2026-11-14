@@ -2067,3 +2067,438 @@
   .findus__place-text { display: none; }
   .findus__list { margin: 16px 0 20px; }
 }
+
+/* =========================================================
+   МАКЕТ v5 — кнопки на одной направляющей, единые стрелки у всех лент
+   ========================================================= */
+
+/* ---------- Одна направляющая: кнопки по левому краю контейнера, как заголовки ---------- */
+.cta-row--center {
+  justify-content: flex-start;
+}
+
+/* ресторан: текст и кнопка — по той же линии, что и в остальных блоках */
+.restaurant {
+  container-type: inline-size;
+}
+
+.restaurant__main {
+  padding-left: max(var(--page-gutter), calc((100cqw - min(var(--container-width), 100cqw - var(--page-gutter) * 2)) / 2));
+}
+
+/* «Почему бронировать на сайте»: кнопка под заголовком, а не справа */
+@media (min-width: 1101px) {
+  .direct__inner {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 2.4fr);
+    align-items: start;
+    row-gap: 28px;
+  }
+
+  .direct__title { grid-column: 1; grid-row: 1; }
+  .direct__btn { grid-column: 1; grid-row: 2; justify-self: start; }
+  .direct__list { grid-column: 2; grid-row: 1 / span 2; }
+}
+
+/* номера: цена и кнопки всегда на одной высоте — по верху строки, вровень с фото и названием */
+.rt-room {
+  align-items: start;
+}
+
+.rt-room__side {
+  align-self: start;
+}
+
+/* при раскрытии вкладыша текст не перестраивается: ширина списка сразу равна раскрытой */
+@media (min-width: 901px) {
+  .room-tab__body {
+    right: auto;
+    width: var(--rt-open-w, 100%);
+  }
+}
+
+/* телефон: кнопка «Свернуть» в конце списка номеров */
+.room-tab__close {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .room-tab__close {
+    display: flex;
+    width: 100%;
+    margin: 8px 0 12px;
+  }
+}
+
+/* ---------- Ленты: везде одинаковые стрелки под лентой, слева на направляющей ---------- */
+.services__arrow,
+.discover__arrow {
+  display: none !important;
+}
+
+.services__carousel,
+.discover__carousel {
+  row-gap: 0;
+}
+
+.cnav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.cnav[hidden] {
+  display: none;
+}
+
+.cnav__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(200, 152, 116, 0.45);
+  border-radius: 50%;
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, opacity 0.25s;
+}
+
+.cnav__btn:hover {
+  background: rgba(200, 152, 116, 0.12);
+  border-color: var(--color-gold);
+  color: var(--color-white);
+}
+
+.cnav__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cnav__btn:not(:disabled)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.32) 50%, transparent 62%);
+  transform: translateX(-140%);
+  animation: carousel-arrow-shine 5s ease infinite;
+  pointer-events: none;
+}
+
+.cnav__btn svg {
+  position: relative;
+  z-index: 1;
+}
+
+.cnav__count {
+  min-width: 48px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--color-text-label);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cnav__btn::before {
+    animation: none !important;
+  }
+}
+
+/* спецпредложения и отзывы — ленты на всех экранах: 3 карточки на компьютере, 2 на планшете, 1 на телефоне */
+.offers__grid,
+.reviews__grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: none;
+  grid-auto-columns: calc((100% - 2 * clamp(16px, 2vw, 28px)) / 3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.offers__grid::-webkit-scrollbar,
+.reviews__grid::-webkit-scrollbar {
+  display: none;
+}
+
+.offer,
+.review {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 1100px) {
+  .offers__grid,
+  .reviews__grid {
+    grid-template-columns: none;
+    grid-auto-columns: calc((100% - clamp(16px, 2vw, 28px)) / 2);
+  }
+}
+
+@media (max-width: 900px) {
+  .offers__grid,
+  .reviews__grid {
+    grid-auto-columns: 84%;
+  }
+}
+
+/* полоса преимуществ на планшете и телефоне — сеткой, без прокрутки */
+@media (max-width: 1100px) {
+  .perks__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+}
+
+@media (max-width: 600px) {
+  .perks__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+  }
+
+  .perk {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .offers__grid,
+  .reviews__grid {
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding-inline: var(--page-gutter);
+    scroll-padding-inline: var(--page-gutter);
+  }
+}
+
+/* ---------- v5: окно «Подробнее» о номере — в общем стиле (тёмный фон, медная рамка) ---------- */
+.room-dialog {
+  margin: auto;
+  width: min(1040px, calc(100vw - 48px));
+  max-width: none;
+  height: min(620px, calc(100vh - 48px));
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(200, 152, 116, 0.35);
+  border-radius: 20px;
+  background: var(--color-bg-dark);
+  color: var(--color-white);
+}
+
+.room-dialog[open] {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  animation: room-dialog-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.room-dialog::backdrop {
+  background: rgba(3, 10, 12, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes room-dialog-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+}
+
+.room-dialog__media {
+  position: relative;
+  min-height: 0;
+}
+
+.room-dialog__img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+}
+
+.room-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 36px 36px 28px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 152, 116, 0.5) transparent;
+}
+
+.room-dialog__title {
+  padding-right: 56px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.room-dialog__text {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+.room-dialog__label {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.room-dialog__std {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 16px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.room-dialog__std li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.room-dialog__std li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.room-dialog__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(243, 240, 233, 0.1);
+}
+
+.room-dialog__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* закрыть — такая же круглая кнопка, как стрелки лент */
+.room-dialog__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(200, 152, 116, 0.45);
+  border-radius: 50%;
+  background: rgba(6, 21, 24, 0.7);
+  font-size: 0;
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.room-dialog__close:hover {
+  background: rgba(200, 152, 116, 0.15);
+  border-color: var(--color-gold);
+  color: var(--color-white);
+}
+
+/* телефон: окно выезжает снизу, как выбор дат; цена и «Выбрать» всегда внизу */
+@media (max-width: 900px) {
+  .room-dialog {
+    margin: auto 0 0;
+    width: 100%;
+    height: auto;
+    max-height: 92dvh;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .room-dialog[open] {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    animation: room-sheet-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes room-sheet-in {
+    from { transform: translateY(100%); }
+  }
+
+  .room-dialog__img {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    max-height: 32dvh;
+  }
+
+  .room-dialog__close {
+    top: 14px;
+    right: 14px;
+  }
+
+  .room-dialog__body {
+    padding: 20px var(--page-gutter) 0;
+  }
+
+  .room-dialog__title {
+    padding-right: 0;
+    font-size: 24px;
+  }
+
+  .room-dialog__std {
+    grid-template-columns: 1fr;
+  }
+
+  .room-dialog__foot {
+    position: sticky;
+    bottom: 0;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding: 14px var(--page-gutter) calc(14px + env(safe-area-inset-bottom));
+    background: var(--color-bg-dark);
+  }
+}
+
+@media (max-width: 900px) {
+  .room-dialog__actions {
+    width: 100%;
+  }
+
+  .room-dialog__actions > * {
+    flex: 1 1 0;
+  }
+}
+
+/* ---------- v5: исправления по общей проверке ---------- */
+/* переходы по меню: заголовок блока не прячется под закреплённой шапкой */
+html {
+  scroll-padding-top: 76px;
+}
+
+/* Fit Revolution: колонки сжимаются по ширине экрана (на 320px блок вылезал за край) */
+.bio__grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+@media (max-width: 900px) {
+  .bio__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* стрелки лент на компьютере — по центру под лентой */
+@media (min-width: 901px) {
+  .cnav {
+    justify-content: center;
+  }
+}

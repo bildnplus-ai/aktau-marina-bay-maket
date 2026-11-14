@@ -9,6 +9,9 @@
   function notify(message) {
     const toast = document.getElementById('toast');
     if (!toast) return;
+    // открытое окно перекрывает страницу — подсказку показываем внутри него
+    const host = document.querySelector('dialog[open]') || document.body;
+    if (toast.parentElement !== host) host.appendChild(toast);
     toast.textContent = message;
     toast.hidden = false;
     requestAnimationFrame(() => toast.classList.add('is-visible'));
@@ -17,6 +20,39 @@
       toast.classList.remove('is-visible');
       setTimeout(() => { toast.hidden = true; }, 300);
     }, 3200);
+  }
+
+  // Контакты отеля — в одном месте. Номер +7 778 239-59-86 из старого сайта оказался чужим,
+  // поэтому пока поля пустые: кнопки WhatsApp и телефон показывают подсказку.
+  // Когда отель даст номера, достаточно вписать их сюда.
+  const HOTEL_WA = '';      // номер WhatsApp только цифрами, например '77010000000'
+  const HOTEL_PHONE = '';   // телефон для показа, например '+7 (701) 000-00-00'
+
+  function setWaLink(a) {
+    if (!HOTEL_WA) return;
+    const text = a.dataset.waText;
+    a.href = `https://wa.me/${HOTEL_WA}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+    a.target = '_blank';
+    a.rel = 'noopener';
+  }
+
+  function initContacts() {
+    document.querySelectorAll('[data-wa]').forEach(setWaLink);
+    if (HOTEL_PHONE) {
+      document.querySelectorAll('[data-tel]').forEach((a) => {
+        a.href = `tel:${HOTEL_PHONE.replace(/[^\d+]/g, '')}`;
+        a.textContent = HOTEL_PHONE;
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (!HOTEL_WA && e.target.closest('[data-wa]')) {
+        e.preventDefault();
+        notify('Номер WhatsApp отеля уточняется (макет)');
+      } else if (!HOTEL_PHONE && e.target.closest('[data-tel]')) {
+        e.preventDefault();
+        notify('Телефон отеля уточняется (макет)');
+      }
+    });
   }
 
   // Закреплённая шапка появляется, когда первый экран ушёл из вида
@@ -83,13 +119,29 @@
     mobile.addEventListener('change', () => { if (!mobile.matches) close(); });
   }
 
+  // Высота закреплённой шапки — чтобы при прокрутке к блоку он не прятался под ней
+  function topOffset() {
+    const bar = document.getElementById('stickybar');
+    return (bar && bar.classList.contains('is-visible') ? bar.offsetHeight : 0) + 12;
+  }
+
   // Номера: три вкладыша. На компьютере раскрываются при наведении и сворачиваются, когда мышь ушла;
-  // на телефоне — по нажатию, сворачиваются при нажатии вне вкладыша или когда вкладыш ушёл с экрана
+  // на телефоне — по нажатию. При сворачивании страница возвращается к этому вкладышу.
   function initRoomTabs() {
     const wrap = document.querySelector('.room-tabs');
     const tabs = [...document.querySelectorAll('.room-tab')];
     if (!wrap || !tabs.length) return;
     const hover = window.matchMedia('(hover: hover) and (min-width: 901px)');
+    const dialog = document.getElementById('room-dialog');
+
+    // ширина раскрытого вкладыша (flex-grow 3.4 против 1) — список сразу такой ширины и не перестраивается
+    function setOpenWidth() {
+      const gap = parseFloat(getComputedStyle(wrap).columnGap) || 0;
+      const free = wrap.clientWidth - gap * (tabs.length - 1);
+      wrap.style.setProperty('--rt-open-w', `${free * 3.4 / (tabs.length - 1 + 3.4)}px`);
+    }
+    setOpenWidth();
+    window.addEventListener('resize', setOpenWidth);
 
     function open(tab) {
       tabs.forEach((t) => {
@@ -99,15 +151,12 @@
       });
     }
 
-    // свернуть, не сдвигая то, что пользователь сейчас видит на экране
-    function closeKeepingView() {
-      const current = tabs.find((t) => t.classList.contains('is-open'));
-      if (!current) return;
-      const anchor = [...document.querySelectorAll('section')].find((sec) => sec.getBoundingClientRect().bottom > 0);
-      const before = anchor ? anchor.getBoundingClientRect().top : 0;
+    // свернуть и вернуть пользователя к началу этого вкладыша
+    function closeAndReturn(tab) {
       open(null);
-      if (anchor && current.getBoundingClientRect().bottom < 0) {
-        window.scrollBy(0, anchor.getBoundingClientRect().top - before);
+      const top = tab.getBoundingClientRect().top;
+      if (top < topOffset() || top > window.innerHeight * 0.6) {
+        window.scrollTo({ top: top + window.scrollY - topOffset(), behavior: 'instant' });
       }
     }
 
@@ -117,23 +166,30 @@
       head.addEventListener('focus', () => { if (hover.matches) open(tab); });
       head.addEventListener('click', () => {
         if (!hover.matches && tab.classList.contains('is-open')) {
-          open(null);
+          closeAndReturn(tab);
           return;
         }
         open(tab);
         if (!hover.matches) {
-          setTimeout(() => tab.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }), 50);
+          setTimeout(() => window.scrollTo({
+            top: tab.getBoundingClientRect().top + window.scrollY - topOffset(),
+            behavior: reduceMotion ? 'auto' : 'smooth',
+          }), 50);
         }
       });
+      tab.querySelector('.room-tab__close')?.addEventListener('click', () => closeAndReturn(tab));
 
-      // телефон: вкладыш полностью ушёл с экрана — сворачиваем
+      // телефон: вкладыш целиком ушёл с экрана — сворачиваем, не сдвигая то, что сейчас на экране
       new IntersectionObserver(([entry]) => {
-        if (!hover.matches && !entry.isIntersecting && tab.classList.contains('is-open')) closeKeepingView();
+        if (hover.matches || entry.isIntersecting || !tab.classList.contains('is-open')) return;
+        const above = entry.boundingClientRect.bottom <= 0;
+        const before = tab.offsetHeight;
+        open(null);
+        if (above) window.scrollBy({ top: tab.offsetHeight - before, behavior: 'instant' });
       }).observe(tab);
     });
 
-    // компьютер: мышь ушла с вкладышей, фокус клавиатуры ушёл — все три возвращаются в исходное положение
-    const dialog = document.getElementById('room-dialog');
+    // компьютер: мышь или фокус ушли с вкладышей — все три возвращаются в исходное положение
     wrap.addEventListener('mouseleave', () => { if (hover.matches && !dialog?.open) open(null); });
     dialog?.addEventListener('close', () => {
       setTimeout(() => { if (hover.matches && !wrap.matches(':hover')) open(null); }, 50);
@@ -142,10 +198,70 @@
       if (hover.matches && !wrap.contains(e.relatedTarget) && !dialog?.open) open(null);
     });
 
-    // телефон: нажатие вне вкладышей сворачивает открытый (окно номера и подсказка не считаются)
+    // телефон: нажатие вне вкладышей сворачивает открытый и возвращает к нему
     document.addEventListener('click', (e) => {
       if (hover.matches || wrap.contains(e.target) || e.target.closest('dialog, .toast')) return;
-      open(null);
+      const current = tabs.find((t) => t.classList.contains('is-open'));
+      if (current) closeAndReturn(current);
+    });
+  }
+
+  // Все ленты (спецпредложения, услуги, туры, отзывы) — одинаковые стрелки «назад / вперёд» под лентой
+  // со счётчиком. Если всё помещается на экране, стрелки скрываются. Пальцем листать тоже можно.
+  function initCarousels() {
+    const arrow = (d) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="${d}"/></svg>`;
+    const list = [
+      { scroller: '.offers__grid', items: '.offers__grid', after: '.offers__grid', label: 'спецпредложения' },
+      { scroller: '.services__viewport', items: '.services__track', after: '#services-carousel', label: 'услуги' },
+      { scroller: '.discover__viewport', items: '.discover__track', after: '#discover-carousel', label: 'туры', inContainer: true },
+      { scroller: '.reviews__grid', items: '.reviews__grid', after: '.reviews__grid', label: 'отзывы' },
+    ];
+
+    list.forEach((cfg) => {
+      const scroller = document.querySelector(cfg.scroller);
+      const track = document.querySelector(cfg.items);
+      const anchor = document.querySelector(cfg.after);
+      if (!scroller || !track || !anchor) return;
+      const items = [...track.children];
+
+      const nav = document.createElement('div');
+      nav.className = 'cnav';
+      nav.innerHTML = `<button class="cnav__btn" type="button" data-dir="-1" aria-label="Назад: ${cfg.label}">${arrow('M15 6l-6 6 6 6')}</button>`
+        + '<span class="cnav__count" aria-live="polite"></span>'
+        + `<button class="cnav__btn" type="button" data-dir="1" aria-label="Вперёд: ${cfg.label}">${arrow('M9 6l6 6-6 6')}</button>`;
+      if (cfg.inContainer) {
+        const box = document.createElement('div');
+        box.className = 'container';
+        box.appendChild(nav);
+        anchor.after(box);
+      } else {
+        anchor.after(nav);
+      }
+      const [prev, next] = nav.querySelectorAll('.cnav__btn');
+      const count = nav.querySelector('.cnav__count');
+
+      function step() {
+        return items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft : scroller.clientWidth;
+      }
+
+      function update() {
+        const max = scroller.scrollWidth - scroller.clientWidth;
+        nav.hidden = max <= 2;
+        const s = step();
+        const visible = Math.max(1, Math.round(scroller.clientWidth / s));
+        const pages = Math.max(1, items.length - visible + 1);
+        const page = Math.min(pages, Math.round(scroller.scrollLeft / s) + 1);
+        count.textContent = `${page} / ${pages}`;
+        prev.disabled = scroller.scrollLeft <= 2;
+        next.disabled = scroller.scrollLeft >= max - 2;
+      }
+
+      [prev, next].forEach((btn) => btn.addEventListener('click', () => {
+        scroller.scrollBy({ left: Number(btn.dataset.dir) * step(), behavior: reduceMotion ? 'auto' : 'smooth' });
+      }));
+      scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+      window.addEventListener('resize', update);
+      update();
     });
   }
 
@@ -211,7 +327,7 @@
       if (above) mapWrap.style.transition = 'none';
       setOpen(false);
       if (above) {
-        window.scrollBy(0, document.documentElement.scrollHeight - before);
+        window.scrollBy({ top: document.documentElement.scrollHeight - before, behavior: 'instant' });
         requestAnimationFrame(() => { mapWrap.style.transition = ''; });
       }
     }).observe(box);
@@ -228,25 +344,45 @@
     const dialog = document.getElementById('room-dialog');
     if (!dialog || typeof dialog.showModal !== 'function') return;
     let opener = null;
+    const q = (sel) => dialog.querySelector(sel);
 
     document.querySelectorAll('[data-room-more]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const card = btn.closest('.rt-room');
+        const name = card.querySelector('.rt-room__title').textContent.trim();
         opener = btn;
-        dialog.querySelector('.room-dialog__img').src = card.dataset.img;
-        dialog.querySelector('.room-dialog__img').style.objectPosition = card.dataset.pos;
-        dialog.querySelector('.room-dialog__en').textContent = card.querySelector('.rc__en').textContent;
-        dialog.querySelector('.room-dialog__title').textContent = card.querySelector('.rt-room__title').textContent;
-        dialog.querySelector('.room-dialog__chips').innerHTML = card.querySelector('.rc__chips').innerHTML;
-        dialog.querySelector('.room-dialog__text').textContent = card.querySelector('.rc3__full').innerHTML.trim();
-        dialog.querySelector('.room-dialog__book').dataset.roomName = card.querySelector('.rt-room__title').textContent;
+        q('.room-dialog__img').src = card.dataset.img;
+        q('.room-dialog__img').style.objectPosition = card.dataset.pos;
+        q('.room-dialog__en').textContent = card.querySelector('.rc__en').textContent;
+        q('.room-dialog__title').textContent = name;
+        q('.room-dialog__chips').innerHTML = card.querySelector('.rc__chips').innerHTML;
+        // текст берём как текст, а не как HTML — иначе &nbsp; и кавычки показались бы кодом
+        q('.room-dialog__text').textContent = card.querySelector('.rc3__full').content.textContent.trim();
+        q('.room-dialog__book').dataset.roomName = name;
+        q('.room-dialog__ask').dataset.waText = `Здравствуйте! Вопрос по номеру «${name}» в Aktau Marina Bay.`;
+        setWaLink(q('.room-dialog__ask'));
+        q('.room-dialog__body').scrollTop = 0;
         dialog.showModal();
+        document.body.classList.add('menu-open');
       });
     });
 
-    dialog.querySelector('[data-close-room]').addEventListener('click', () => dialog.close());
+    q('[data-close-room]').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
-    dialog.addEventListener('close', () => opener?.focus({ preventScroll: true }));
+    dialog.addEventListener('close', () => {
+      document.body.classList.remove('menu-open');
+      opener?.focus({ preventScroll: true });
+    });
+  }
+
+  // Документы в подвале — пока заглушки: не прыгаем наверх страницы, а показываем подсказку
+  function initDocLinks() {
+    document.querySelectorAll('.footer-req a[href="#"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        notify(`«${a.textContent.trim()}» — документ предоставит отель (макет)`);
+      });
+    });
   }
 
   // «Выбрать» / «Забронировать» в карточках: в рабочей версии откроет Exely на нужной категории
@@ -292,7 +428,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    [initStickyBar, initDatesSheet, initRoomTabs, initRoomDialog, initBookButtons, initShimmer, initFindUs, initSlides].forEach((init) => {
+    [initStickyBar, initDatesSheet, initRoomTabs, initRoomDialog, initBookButtons, initShimmer, initFindUs, initCarousels, initDocLinks, initContacts, initSlides].forEach((init) => {
       try {
         init();
       } catch (err) {
