@@ -1,0 +1,2069 @@
+/* =========================================================
+   МАКЕТ «после правок» — новые блоки и заглушки.
+   Подключается после styles.css, основной CSS не меняется.
+   ========================================================= */
+
+/* Заглушка «данные от отеля» — пунктирная плашка, видна на скриншотах */
+.ph {
+  display: inline-block;
+  padding: 0 6px;
+  border: 1px dashed rgba(197, 164, 126, 0.75);
+  border-radius: 6px;
+  background: rgba(197, 164, 126, 0.12);
+  color: var(--color-gold-light);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.section-h {
+  margin: 0;
+  font-size: var(--font-section-heading);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.rc__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(6, 21, 24, 0.78);
+  border: 1px dashed rgba(197, 164, 126, 0.8);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-gold-light);
+}
+
+/* ---------- Закреплённая шапка ---------- */
+.stickybar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 90;
+  background: rgba(6, 21, 24, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(197, 164, 126, 0.25);
+  transform: translateY(-110%);
+  transition: transform 0.3s ease;
+}
+
+.stickybar.is-visible {
+  transform: translateY(0);
+}
+
+.stickybar__inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 64px;
+}
+
+.stickybar__logo .logo__icon {
+  width: 30px;
+  height: auto;
+}
+
+.stickybar__logo .logo__wordmark {
+  width: 150px;
+  height: auto;
+}
+
+.stickybar__nav {
+  display: flex;
+  gap: 22px;
+  margin-left: auto;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.stickybar__nav a:hover {
+  color: var(--color-gold);
+}
+
+.stickybar__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stickybar__wa {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(197, 164, 126, 0.5);
+  border-radius: 50%;
+  color: var(--color-gold);
+}
+
+.lang-switch {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.lang-switch b {
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.lang-switch--hero {
+  margin-right: 4px;
+  font-size: 13px;
+}
+
+/* ---------- Номерной фонд: 9 категорий ---------- */
+.rooms2 {
+  padding: clamp(64px, 8vw, 100px) 0;
+  background: var(--color-bg);
+}
+
+.rooms2__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: end;
+  margin-bottom: 36px;
+}
+
+.rooms2__stats {
+  margin-top: 14px;
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+
+.rooms2__stats b {
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+.rooms2__standard {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  padding-left: 20px;
+  border-left: 2px solid rgba(197, 164, 126, 0.5);
+}
+
+.room-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.room-filter__tab {
+  padding: 11px 20px;
+  border: 1px solid rgba(197, 164, 126, 0.55);
+  border-radius: 999px;
+  font-size: 15px;
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.room-filter__tab span {
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+.room-filter__tab.is-active {
+  background: var(--color-gold);
+  color: var(--color-bg);
+}
+
+.rooms2__grid,
+.offers__grid,
+.reviews__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.rc,
+.offer {
+  display: flex;
+  flex-direction: column;
+  background: rgba(14, 42, 49, 0.92);
+  border: 1px solid rgba(197, 164, 126, 0.24);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.rc[hidden] {
+  display: none;
+}
+
+.rc__media,
+.offer__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.rc__media img,
+.offer__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc__body,
+.offer__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+
+.rc__en {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.rc__title,
+.offer__title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.rc__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rc__chips li {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.rc__text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.rc__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rc__price {
+  font-size: 15px;
+  color: var(--color-white);
+}
+
+.rc__btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--color-gold-btn);
+  color: var(--color-bg-dark);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------- Преимущества: 6 пунктов вместо 5 ---------- */
+.why .why__item-text .ph {
+  font-size: 0.95em;
+}
+
+/* Список прижат к низу коллажа, а заголовок лежит сверху поверх него:
+   шестой пункт не должен доставать до заголовка */
+@media (min-width: 901px) {
+  .why .why__item {
+    padding: 13px 0;
+  }
+
+  .why .why__divider {
+    height: 44px;
+  }
+}
+
+/* ---------- Спецпредложения ---------- */
+.offers {
+  padding: clamp(64px, 8vw, 100px) 0;
+  background: var(--color-bg-dark);
+}
+
+.offers__header,
+.reviews__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px 40px;
+  margin-bottom: 36px;
+}
+
+.offers__lead {
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.offer__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Fit Revolution: мета у услуг ---------- */
+.services__meta {
+  margin: 6px 0 4px;
+  font-size: 14px;
+  color: var(--color-gold-light);
+}
+
+/* ---------- Бизнес: цифры зала ---------- */
+.hall-facts {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 32px;
+  margin-top: 28px;
+  padding: 22px 26px;
+  border: 1px solid rgba(197, 164, 126, 0.4);
+  border-radius: 16px;
+  background: rgba(6, 21, 24, 0.7);
+}
+
+.hall-facts__title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-gold);
+}
+
+.hall-facts__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  flex: 1;
+}
+
+.hall-facts__list li {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.hall-facts__list b {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-white);
+}
+
+/* ---------- Туры ---------- */
+.discover__card-meta {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--color-gold-light);
+}
+
+.discover__card-btn {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+/* ---------- Отзывы ---------- */
+.reviews {
+  padding: clamp(64px, 8vw, 100px) 0 clamp(24px, 4vw, 48px);
+  background: var(--color-bg);
+}
+
+.reviews__rating {
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+
+.reviews__rating b {
+  font-size: 22px;
+  color: var(--color-gold);
+  margin-right: 6px;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid rgba(197, 164, 126, 0.24);
+  border-radius: 18px;
+  background: rgba(14, 42, 49, 0.92);
+}
+
+.review__stars {
+  color: var(--color-gold);
+  letter-spacing: 3px;
+}
+
+.review__text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.review__who {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Расположение ---------- */
+.location__h {
+  margin-bottom: 32px;
+}
+
+.map-ph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 360px;
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed rgba(197, 164, 126, 0.7);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 12px, transparent 12px 24px),
+    rgba(14, 42, 49, 0.92);
+}
+
+.map-ph__pin {
+  color: var(--color-gold);
+}
+
+.map-ph__title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.map-ph__text {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Подвал: реквизиты, документы, оплата ---------- */
+.footer-req {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 24px 48px;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-req__col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-req__col a:hover {
+  color: var(--color-gold);
+}
+
+.footer-req__h {
+  margin-bottom: 6px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.footer-req__note {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.pay-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pay-chips span {
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: var(--color-white);
+  color: #1a1f36;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 1100px) {
+  .stickybar__nav {
+    display: none;
+  }
+
+  .stickybar__actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .rooms2__header {
+    grid-template-columns: 1fr;
+  }
+
+  .rooms2__grid,
+  .offers__grid,
+  .reviews__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-req {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .rooms2__grid,
+  .offers__grid,
+  .reviews__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stickybar__inner {
+    height: 56px;
+    gap: 10px;
+  }
+
+  .stickybar__logo .logo__wordmark,
+  .stickybar .lang-switch {
+    display: none;
+  }
+
+  .lang-switch--hero {
+    display: none;
+  }
+
+  .room-filter {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding-inline: var(--page-gutter);
+    scrollbar-width: none;
+  }
+
+  .room-filter__tab {
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .hall-facts {
+    padding: 18px;
+  }
+}
+
+/* ---------- Пометка «Демо-макет» ---------- */
+.demo-badge {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 120;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px dashed rgba(197, 164, 126, 0.9);
+  border-radius: 999px;
+  background: rgba(6, 21, 24, 0.92);
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+
+.demo-badge b {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   МАКЕТ v2 — правки по предложениям директора (14.11.2026)
+   ========================================================= */
+
+/* ---------- Палитра 60·30·10 (бренд: бирюза + медь, олива/крем — вторичные) ---------- */
+:root {
+  --color-teal: #0b4f57;
+  --color-olive: #2f2b1c;
+  --color-gold: #c89874;
+  --color-gold-light: #dbaf8a;
+  --color-gold-btn: #c89874;
+  --color-white: #f3f0e9;
+  --color-text-muted: rgba(243, 240, 233, 0.82);
+  --color-text-label: rgba(243, 240, 233, 0.72);
+}
+
+/* Читаемость (п. 11): приглушённый текст не тусклее 70% */
+.services__text,
+.bio__lead,
+.bio__text,
+.business__intro,
+.business__card-text,
+.site-footer__legal,
+.restaurant__item-text {
+  color: rgba(243, 240, 233, 0.78);
+}
+
+/* Тёмный текст на медных кнопках: контраст 7.3 вместо 2.45 */
+.btn-primary,
+.rc__btn,
+.mobile-bar__book {
+  color: var(--color-bg-dark);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: var(--color-gold-light);
+}
+
+/* ---------- Плашка «Демо» + переключатель слайд-шоу ---------- */
+.demo-badge__toggle {
+  pointer-events: auto;
+  margin-left: 6px;
+  padding: 2px 10px;
+  border: 1px solid rgba(200, 152, 116, 0.6);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--color-gold-light);
+  cursor: pointer;
+}
+
+.demo-badge__toggle[aria-pressed="true"] {
+  background: var(--color-gold);
+  color: var(--color-bg-dark);
+}
+
+/* ---------- Закреплённая шапка: кнопка меню ---------- */
+.stickybar__menu {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(243, 240, 233, 0.4);
+  border-radius: 50%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.stickybar__menu span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--color-white);
+}
+
+/* ---------- Слайд-шоу на первом экране (вариант, п. 2) ---------- */
+.hero-slides {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: none;
+  overflow: hidden;
+}
+
+.slides-on .hero-slides {
+  display: block;
+}
+
+.hero-slides__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.hero-slides__slide.is-active {
+  opacity: 1;
+}
+
+.hero-slides::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(6, 21, 24, 0.72) 0%, rgba(6, 21, 24, 0.35) 55%, rgba(6, 21, 24, 0.15) 100%);
+}
+
+.hero-slides__caption {
+  position: absolute;
+  z-index: 2;
+  right: max(24px, calc((100vw - var(--container-width)) / 2));
+  bottom: 150px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(6, 21, 24, 0.75);
+  border: 1px solid rgba(200, 152, 116, 0.6);
+  font-size: 14px;
+  color: var(--color-gold-light);
+}
+
+/* ---------- Первый экран: «Выбрать даты» на телефоне (п. 4) ---------- */
+.hero__dates {
+  display: none;
+}
+
+.booking__sheet-head {
+  display: none;
+}
+
+/* ---------- Полоса преимуществ (п. 5) ---------- */
+.perks {
+  background: var(--color-teal);
+  border-top: 1px solid rgba(200, 152, 116, 0.35);
+  border-bottom: 1px solid rgba(200, 152, 116, 0.35);
+}
+
+.perks__list {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px 28px;
+  padding: 22px 0;
+}
+
+.perk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--color-white);
+}
+
+.perk svg {
+  flex-shrink: 0;
+  color: var(--color-gold-light);
+}
+
+.perk b {
+  font-weight: 600;
+}
+
+/* ---------- Почему бронировать на сайте (п. 1) ---------- */
+.direct {
+  padding: clamp(40px, 5vw, 64px) 0;
+  background: var(--color-bg);
+}
+
+.direct__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2.4fr) auto;
+  gap: 24px 40px;
+  align-items: center;
+}
+
+.direct__title {
+  font-size: clamp(22px, 2vw + 10px, 30px);
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.direct__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.direct__list li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 2px solid var(--color-gold);
+}
+
+.direct__list b {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.direct__list span {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Номера: 3 группы с прокруткой вбок (п. 7) ---------- */
+.rooms3 {
+  padding: clamp(56px, 7vw, 90px) 0;
+  background: var(--color-bg);
+}
+
+.rooms3__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 20px 64px;
+  align-items: end;
+  margin-bottom: 36px;
+}
+
+.room-row + .room-row {
+  margin-top: 40px;
+}
+
+.room-row__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.room-row__title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--color-white);
+}
+
+.room-row__title span {
+  margin-left: 4px;
+  font-size: 15px;
+  color: var(--color-gold);
+}
+
+.room-row__sub {
+  font-size: 15px;
+  color: var(--color-text-label);
+}
+
+.room-row__nav {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.room-row__arrow {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(200, 152, 116, 0.55);
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-gold);
+  cursor: pointer;
+}
+
+.room-row__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.room-row__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2 * 20px) / 3);
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 152, 116, 0.5) transparent;
+  padding-bottom: 8px;
+}
+
+.rc3 {
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  background: rgba(14, 42, 49, 0.92);
+  border: 1px solid rgba(200, 152, 116, 0.24);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.rc3__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.rc3__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc3__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  padding: 16px 18px 18px;
+}
+
+.rc3__title {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.rc3__text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.rc3__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(243, 240, 233, 0.1);
+}
+
+.rc3__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rc3__more {
+  font-size: 14px;
+  color: var(--color-gold-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Окно с подробностями номера */
+.room-dialog {
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  border: 1px solid rgba(200, 152, 116, 0.4);
+  border-radius: 18px;
+  background: #0e2a31;
+  color: var(--color-white);
+  overflow: auto;
+}
+
+.room-dialog::backdrop {
+  background: rgba(3, 10, 12, 0.7);
+}
+
+.room-dialog__img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.room-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 24px 24px;
+}
+
+.room-dialog__title {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.room-dialog__text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.room-dialog__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(6, 21, 24, 0.8);
+  font-size: 24px;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+/* ---------- Спецпредложения: бирюзовая поверхность, 4 карточки (п. 6) ---------- */
+.offers {
+  background: var(--color-teal);
+}
+
+.offers__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.offer {
+  background: rgba(6, 21, 24, 0.55);
+}
+
+.offer--hero {
+  border: 2px solid var(--color-gold);
+}
+
+.offer__list {
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.offers__lead {
+  color: var(--color-text-muted);
+}
+
+/* ---------- Кнопки действий (п. 8) ---------- */
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 28px;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-row--center {
+  justify-content: center;
+}
+
+.cta-note {
+  font-size: 14px;
+  color: var(--color-text-label);
+}
+
+/* ---------- Fit Revolution: оливковая поверхность ---------- */
+.bio,
+.services {
+  background: var(--color-olive);
+}
+
+.services .services__card {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(200, 152, 116, 0.3);
+}
+
+/* ---------- Для бизнеса (п. 9) ---------- */
+.business2 .business__heading {
+  margin-bottom: 12px;
+}
+
+.biz-terms {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.biz-terms li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid rgba(200, 152, 116, 0.35);
+  border-top: 2px solid var(--color-gold);
+  border-radius: 0 0 14px 14px;
+  background: rgba(6, 21, 24, 0.78);
+}
+
+.biz-terms b {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.biz-terms span {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* ---------- FAQ (п. 10) ---------- */
+.faq {
+  padding: clamp(56px, 7vw, 90px) 0;
+  background: var(--color-teal);
+}
+
+.faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  gap: 24px 64px;
+  align-items: start;
+}
+
+.faq__item {
+  border-bottom: 1px solid rgba(243, 240, 233, 0.2);
+}
+
+.faq__item summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  font-size: 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__item summary::after {
+  content: "+";
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-gold-light);
+}
+
+.faq__item[open] summary::after {
+  content: "−";
+}
+
+.faq__item p {
+  padding: 0 0 18px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Контакты: только карта и адрес ---------- */
+.location2 .location__layout {
+  grid-template-columns: 1fr;
+}
+
+.location2 .map-ph {
+  min-height: 320px;
+}
+
+/* ---------- Нижняя панель на телефоне (п. 3) ---------- */
+.mobile-bar {
+  display: none;
+}
+
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  background: rgba(3, 10, 12, 0.6);
+}
+
+/* ---------- Адаптив v2 ---------- */
+@media (max-width: 1100px) {
+  .stickybar__menu {
+    display: flex;
+  }
+
+  .perks__list {
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+
+  .perk {
+    flex-shrink: 0;
+  }
+
+  .offers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .biz-terms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .direct__inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  body {
+    padding-bottom: 68px;
+  }
+
+  .mobile-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 130;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 8px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    background: rgba(6, 21, 24, 0.96);
+    border-top: 1px solid rgba(200, 152, 116, 0.35);
+  }
+
+  .mobile-bar__book,
+  .mobile-bar__wa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mobile-bar__book {
+    background: var(--color-gold);
+  }
+
+  .mobile-bar__wa {
+    background: var(--color-teal);
+    border: 1px solid rgba(200, 152, 116, 0.5);
+    color: var(--color-white);
+  }
+
+  .stickybar__book,
+  .stickybar__wa {
+    display: none;
+  }
+
+  .demo-badge {
+    bottom: 76px;
+  }
+
+  /* Форма бронирования → панель снизу по кнопке «Выбрать даты» */
+  .hero__dates {
+    display: block;
+    padding: 0 0 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__dates-btn {
+    width: 100%;
+    height: 54px;
+    font-size: 17px;
+  }
+
+  .hero .booking {
+    display: none;
+  }
+
+  .hero .booking.is-open {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 150;
+    display: block;
+    padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
+    background: var(--color-bg);
+    border-top: 1px solid rgba(200, 152, 116, 0.45);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .hero .booking.is-open::before {
+    display: none;
+  }
+
+  .booking.is-open .booking__sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .booking__sheet-title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .booking__sheet-close {
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--color-white);
+    cursor: pointer;
+  }
+
+  .booking.is-open .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-slides__caption {
+    right: 16px;
+    bottom: 120px;
+  }
+
+  .rooms3__header,
+  .faq__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .room-row__nav {
+    display: none;
+  }
+
+  .room-row__track {
+    grid-auto-columns: 84%;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding-inline: var(--page-gutter);
+    scroll-padding-inline: var(--page-gutter);
+  }
+
+  .offers__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 84%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding-inline: var(--page-gutter);
+  }
+
+  .offer {
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 600px) {
+  .direct__list,
+  .biz-terms {
+    grid-template-columns: 1fr;
+  }
+
+  .perks__list {
+    padding: 16px 0;
+  }
+
+  /* мелкий текст на телефоне — не меньше 15px */
+  .services__text,
+  .bio__lead,
+  .bio__text,
+  .restaurant__intro,
+  .restaurant__item-text,
+  .business__intro,
+  .discover__card-text,
+  .review__text {
+    font-size: 15px;
+  }
+}
+
+/* Телефон: компактнее карточки номеров и отзывы прокруткой вбок (меньше скролла, п. 7) */
+@media (max-width: 900px) {
+  .room-row + .room-row {
+    margin-top: 28px;
+  }
+
+  .room-row__track {
+    grid-auto-columns: 78%;
+  }
+
+  .rc3__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .rc3__body {
+    padding: 14px 16px 16px;
+  }
+
+  .rc3__text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .reviews__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 84%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding-inline: var(--page-gutter);
+  }
+
+  .review {
+    scroll-snap-align: start;
+  }
+}
+
+/* Телефон: нижняя панель выезжает, когда кнопка «Выбрать даты» первого экрана ушла из вида;
+   плашка «Демо» — наверху, чтобы не перекрывать панель */
+@media (max-width: 900px) {
+  .mobile-bar {
+    transform: translateY(110%);
+    transition: transform 0.3s ease;
+  }
+
+  .bar-on .mobile-bar {
+    transform: translateY(0);
+  }
+
+  .demo-badge {
+    top: 64px;
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .demo-badge span {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .bar-on .demo-badge {
+    top: auto;
+    bottom: 74px;
+    left: 8px;
+    transform: none;
+  }
+}
+
+/* =========================================================
+   МАКЕТ v3 — один стиль кнопок, номера во вкладышах, монолитный фон
+   ========================================================= */
+
+/* ---------- Единый фон: все блоки на основном тёмном цвете, без смены поверхностей ----------
+   Фото-разделы (ресторан, бизнес, туры) остаются со своими фонами, как в исходном дизайне. */
+.perks,
+.direct,
+.rooms3,
+.offers,
+.bio,
+.services,
+.reviews,
+.faq,
+.location {
+  background: var(--color-bg);
+}
+
+.perks {
+  border-color: rgba(200, 152, 116, 0.22);
+}
+
+.offer,
+.services .services__card {
+  background: rgba(14, 42, 49, 0.92);
+  border-color: rgba(200, 152, 116, 0.24);
+}
+
+/* ---------- Единый стиль кнопок ----------
+   Основная — медная («Найти номер»), вторичная — полупрозрачная («У меня есть промокод»).
+   Обе с бликом при наведении (.btn-shimmer добавляется скриптом). */
+.rc__btn,
+.mobile-bar__book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--color-gold-btn);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-bg-dark);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+}
+
+.rc__btn:hover,
+.mobile-bar__book:hover {
+  background: var(--color-gold-light);
+}
+
+.btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  border-radius: 999px;
+  background: rgba(243, 240, 233, 0.12);
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(243, 240, 233, 0.9);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-glass:hover {
+  background: rgba(243, 240, 233, 0.2);
+}
+
+.btn-glass--sm {
+  padding: 11px 18px;
+  font-size: 13px;
+}
+
+.discover__card-btn {
+  margin-top: 12px;
+  color: rgba(243, 240, 233, 0.9);
+}
+
+.btn-primary:active,
+.rc__btn:active,
+.btn-glass:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Номера: три вкладыша ---------- */
+.room-tabs {
+  display: flex;
+  gap: 14px;
+  height: 680px;
+}
+
+.room-tab {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(200, 152, 116, 0.28);
+  border-radius: 20px;
+  background: var(--color-bg-dark);
+  transition: flex-grow 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s;
+}
+
+.room-tab.is-open {
+  flex-grow: 3.4;
+  border-color: rgba(200, 152, 116, 0.6);
+}
+
+.room-tab__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease, opacity 0.4s;
+}
+
+.room-tab:not(.is-open):hover .room-tab__bg {
+  transform: scale(1.04);
+}
+
+.room-tab::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 21, 24, 0.15) 0%, rgba(6, 21, 24, 0.55) 55%, rgba(6, 21, 24, 0.92) 100%);
+  transition: background 0.4s;
+  pointer-events: none;
+}
+
+.room-tab.is-open::after {
+  background: rgba(6, 21, 24, 0.9);
+}
+
+.room-tab__head {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 24px;
+  text-align: left;
+  cursor: pointer;
+  transition: inset 0.4s;
+}
+
+.room-tab.is-open .room-tab__head {
+  inset: 0 0 auto 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(200, 152, 116, 0.25);
+  background: rgba(6, 21, 24, 0.6);
+}
+
+.room-tab__title {
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--color-white);
+}
+
+.room-tab__title span {
+  margin-left: 4px;
+  font-size: 16px;
+  color: var(--color-gold);
+}
+
+.room-tab__sub {
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.room-tab__badge {
+  position: static;
+  order: -1;
+  margin-bottom: 6px;
+}
+
+.room-tab.is-open .room-tab__badge {
+  display: none;
+}
+
+.room-tab__body {
+  position: absolute;
+  inset: 98px 0 0 0;
+  z-index: 2;
+  padding: 8px 24px 24px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s 0s, visibility 0s 0.35s;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 152, 116, 0.5) transparent;
+}
+
+.room-tab.is-open .room-tab__body {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s 0.25s, visibility 0s 0s;
+}
+
+.rt-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.rt-room {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 24px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(243, 240, 233, 0.1);
+}
+
+.rt-room:last-child {
+  border-bottom: none;
+}
+
+.rt-room__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.rt-room__title {
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.rt-room__text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.rt-room__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.rt-room__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- Адаптив v3 ---------- */
+@media (max-width: 1100px) {
+  .rt-room {
+    grid-template-columns: 1fr;
+  }
+
+  .rt-room__side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Телефон: вкладыши друг под другом, раскрываются по нажатию */
+  .room-tabs {
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+  }
+
+  .room-tab {
+    flex: none;
+  }
+
+  .room-tab__bg {
+    position: relative;
+    height: 150px;
+  }
+
+  .room-tab::after {
+    inset: 0 0 auto 0;
+    height: 150px;
+    background: linear-gradient(180deg, rgba(6, 21, 24, 0.1) 0%, rgba(6, 21, 24, 0.85) 100%);
+  }
+
+  .room-tab.is-open::after {
+    background: linear-gradient(180deg, rgba(6, 21, 24, 0.1) 0%, rgba(6, 21, 24, 0.85) 100%);
+  }
+
+  .room-tab__head,
+  .room-tab.is-open .room-tab__head {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 150px;
+    justify-content: flex-end;
+    padding: 16px 18px;
+    border-bottom: none;
+    background: none;
+  }
+
+  .room-tab__head::after {
+    content: "+";
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--color-gold-light);
+  }
+
+  .room-tab.is-open .room-tab__head::after {
+    content: "−";
+  }
+
+  .room-tab__title {
+    font-size: 21px;
+  }
+
+  .room-tab__badge {
+    position: absolute;
+    top: 12px;
+    left: auto;
+    right: 12px;
+    margin: 0;
+  }
+
+  .room-tab.is-open .room-tab__badge {
+    display: inline-block;
+  }
+
+  .room-tab__body {
+    position: static;
+    display: none;
+    padding: 4px 18px 8px;
+    overflow: visible;
+  }
+
+  .room-tab.is-open .room-tab__body {
+    display: block;
+  }
+
+  .mobile-bar__wa {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+/* Контурная кнопка WhatsApp (меню, подвал) — в общем стиле вторичных кнопок */
+.btn-outline {
+  border-color: transparent;
+  background: rgba(243, 240, 233, 0.12);
+  color: rgba(243, 240, 233, 0.9);
+}
+
+.btn-outline:hover {
+  border-color: transparent;
+  background: rgba(243, 240, 233, 0.2);
+  color: var(--color-white);
+}
+
+.btn-outline.btn-shimmer::before {
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.28) 50%, transparent 62%);
+}
+
+.booking-dropdown__done {
+  font-weight: 600;
+  color: var(--color-bg-dark);
+}
+
+/* =========================================================
+   МАКЕТ v4 — фото в строках номеров, вкладыши возвращаются в исходное положение
+   ========================================================= */
+.rt-room {
+  grid-template-columns: 148px minmax(0, 1fr) auto;
+}
+
+.rt-room__photo {
+  position: relative;
+  align-self: start;
+  width: 148px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: zoom-in;
+}
+
+.rt-room__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.rt-room__photo:hover img {
+  transform: scale(1.06);
+}
+
+.rt-room__photo .rc__badge {
+  top: auto;
+  bottom: 6px;
+  left: 6px;
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+@media (max-width: 1100px) {
+  .rt-room {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .rt-room__photo {
+    width: 120px;
+  }
+
+  .rt-room__side {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .rt-room {
+    grid-template-columns: 1fr;
+  }
+
+  .rt-room__photo {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+/* ---------- v4: Как нас найти — схема района, по кнопке раскрывается карта ---------- */
+.findus {
+  overflow: hidden;
+  border: 1px solid rgba(200, 152, 116, 0.28);
+  border-radius: 20px;
+  background: var(--color-bg-dark);
+}
+
+.findus__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(20px, 3vw, 36px);
+}
+
+.findus__scheme {
+  margin: 0;
+}
+
+.findus__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+}
+
+.findus__scheme figcaption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-label);
+}
+
+.sch-sea { fill: url(#sch-sea-fill); }
+.sch-wave { fill: none; stroke: rgba(243, 240, 233, 0.12); stroke-width: 1.2; }
+.sch-sea-label { fill: rgba(243, 240, 233, 0.4); font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; }
+.sch-ring { fill: none; stroke: rgba(200, 152, 116, 0.32); stroke-dasharray: 3 7; }
+.sch-ring-label { fill: rgba(200, 152, 116, 0.75); font-size: 12px; }
+.sch-pier { stroke: rgba(200, 152, 116, 0.6); stroke-width: 3; stroke-linecap: round; }
+.sch-hotel { fill: var(--color-gold); }
+.sch-hotel-halo { fill: rgba(200, 152, 116, 0.18); }
+.sch-hotel-label { fill: var(--color-white); font-size: 15px; font-weight: 600; }
+.sch-dot { fill: var(--color-white); transition: r 0.25s, fill 0.25s; }
+.sch-point--car .sch-dot { fill: var(--color-bg-dark); stroke: var(--color-white); stroke-width: 2; }
+.sch-label { fill: rgba(243, 240, 233, 0.88); font-size: 14px; transition: fill 0.25s; }
+.sch-time { fill: rgba(243, 240, 233, 0.55); font-size: 12px; }
+.sch-point.is-active .sch-dot { r: 9; fill: var(--color-gold); }
+.sch-point.is-active .sch-label { fill: var(--color-gold-light); }
+
+.findus__addr {
+  font-size: 22px;
+  color: var(--color-white);
+}
+
+.findus__note {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.findus__note a {
+  color: var(--color-gold-light);
+  white-space: nowrap;
+}
+
+.findus__list {
+  margin: 20px 0 24px;
+  border-top: 1px solid rgba(243, 240, 233, 0.1);
+}
+
+.findus__place {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 12px;
+  border-bottom: 1px solid rgba(243, 240, 233, 0.1);
+  border-left: 2px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.findus__place:hover,
+.findus__place.is-active {
+  background: rgba(243, 240, 233, 0.05);
+  border-left-color: var(--color-gold);
+}
+
+.findus__place-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.findus__place-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-white);
+}
+
+.findus__place-text {
+  font-size: 13px;
+  color: var(--color-text-label);
+}
+
+.findus__place-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--color-gold-light);
+}
+
+.findus__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* раскрытие карты: высота анимируется через grid-template-rows */
+.findus__map {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.findus.is-open .findus__map {
+  grid-template-rows: 1fr;
+}
+
+.findus__map-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.findus__frame {
+  display: block;
+  width: 100%;
+  height: 460px;
+  border: 0;
+  border-top: 1px solid rgba(200, 152, 116, 0.28);
+}
+
+@media (max-width: 900px) {
+  .findus__top {
+    grid-template-columns: 1fr;
+  }
+
+  .findus__addr {
+    font-size: 19px;
+  }
+
+  .findus__actions .btn-primary,
+  .findus__actions .btn-glass {
+    flex: 1 1 auto;
+  }
+
+  .findus__frame {
+    height: 380px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* схема на телефоне ужата вдвое — подписи крупнее, чтобы читались */
+  .findus__svg { overflow: visible; }
+  .sch-label { font-size: 23px; }
+  .sch-time { font-size: 19px; transform: translateY(9px); }
+  .sch-hotel-label { font-size: 24px; }
+  .sch-ring-label { font-size: 18px; }
+  .sch-sea-label { font-size: 18px; }
+
+  .findus__place { padding: 10px 8px; }
+  .findus__place-text { display: none; }
+  .findus__list { margin: 16px 0 20px; }
+}
