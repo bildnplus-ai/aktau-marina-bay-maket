@@ -125,6 +125,34 @@
     return (bar && bar.classList.contains('is-visible') ? bar.offsetHeight : 0) + 12;
   }
 
+  // Свернуть блок, ушедший выше экрана, не сдвигая то, что гость сейчас видит.
+  // Chrome сам компенсирует такой сдвиг, Safari — нет; поэтому на время изменения браузерная
+  // компенсация выключается, а сдвиг видимого элемента замеряется и поправляется ровно на разницу.
+  function keepView(block, change) {
+    const root = document.documentElement;
+    const ref = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+    const useRef = ref && !block.contains(ref);
+    const before = useRef ? ref.getBoundingClientRect().top : 0;
+    root.style.overflowAnchor = 'none';
+    change();
+    if (useRef) {
+      const delta = ref.getBoundingClientRect().top - before;
+      if (Math.abs(delta) > 1) window.scrollBy({ top: delta, behavior: 'instant' });
+    }
+    requestAnimationFrame(() => requestAnimationFrame(() => { root.style.overflowAnchor = ''; }));
+  }
+
+  // Переход по ссылке внутри страницы (меню, подвал): открытый блок сворачиваем до начала прокрутки,
+  // иначе он схлопнется по дороге и прокрутка не доедет до цели
+  function beforeAnchorJump(handler) {
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a || a.matches('[data-open-dates]') || a.getAttribute('href').length < 2) return;
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) handler(target);
+    }, true);
+  }
+
   // Номера: три вкладыша. На компьютере раскрываются при наведении и сворачиваются, когда мышь ушла;
   // на телефоне — по нажатию. При сворачивании страница возвращается к этому вкладышу.
   function initRoomTabs() {
@@ -133,6 +161,7 @@
     if (!wrap || !tabs.length) return;
     const hover = window.matchMedia('(hover: hover) and (min-width: 901px)');
     const dialog = document.getElementById('room-dialog');
+    let switching = false;
 
     // ширина раскрытого вкладыша (flex-grow 3.4 против 1) — список сразу такой ширины и не перестраивается
     function setOpenWidth() {
@@ -165,28 +194,42 @@
       tab.addEventListener('mouseenter', () => { if (hover.matches) open(tab); });
       head.addEventListener('focus', () => { if (hover.matches) open(tab); });
       head.addEventListener('click', () => {
-        if (!hover.matches && tab.classList.contains('is-open')) {
+        if (hover.matches) {
+          open(tab);
+          return;
+        }
+        if (tab.classList.contains('is-open')) {
           closeAndReturn(tab);
           return;
         }
+        // телефон: соседний открытый вкладыш сворачивается, и всё ниже него уезжает вверх.
+        // Держим нажатый заголовок под пальцем, а потом плавно подводим вкладыш к верху экрана.
+        // Пока идёт переключение, автосворачивание «ушедшего с экрана» вкладыша не срабатывает.
+        switching = true;
+        const before = head.getBoundingClientRect().top;
         open(tab);
-        if (!hover.matches) {
-          setTimeout(() => window.scrollTo({
+        window.scrollBy({ top: head.getBoundingClientRect().top - before, behavior: 'instant' });
+        requestAnimationFrame(() => {
+          window.scrollTo({
             top: tab.getBoundingClientRect().top + window.scrollY - topOffset(),
             behavior: reduceMotion ? 'auto' : 'smooth',
-          }), 50);
-        }
+          });
+          setTimeout(() => { switching = false; }, 900);
+        });
       });
       tab.querySelector('.room-tab__close')?.addEventListener('click', () => closeAndReturn(tab));
 
       // телефон: вкладыш целиком ушёл с экрана — сворачиваем, не сдвигая то, что сейчас на экране
       new IntersectionObserver(([entry]) => {
-        if (hover.matches || entry.isIntersecting || !tab.classList.contains('is-open')) return;
-        const above = entry.boundingClientRect.bottom <= 0;
-        const before = tab.offsetHeight;
-        open(null);
-        if (above) window.scrollBy({ top: tab.offsetHeight - before, behavior: 'instant' });
+        if (switching || hover.matches || entry.isIntersecting || !tab.classList.contains('is-open')) return;
+        if (entry.boundingClientRect.bottom <= 0) keepView(tab, () => open(null));
+        else open(null);
       }).observe(tab);
+    });
+
+    beforeAnchorJump((target) => {
+      const current = tabs.find((t) => t.classList.contains('is-open'));
+      if (!hover.matches && current && !current.contains(target)) open(null);
     });
 
     // компьютер: мышь или фокус ушли с вкладышей — все три возвращаются в исходное положение
@@ -200,7 +243,9 @@
 
     // телефон: нажатие вне вкладышей сворачивает открытый и возвращает к нему
     document.addEventListener('click', (e) => {
-      if (hover.matches || wrap.contains(e.target) || e.target.closest('dialog, .toast')) return;
+      // шапка, нижняя панель, меню, выбор дат и окна — не «нажатие мимо», страницу не дёргаем
+      if (hover.matches || wrap.contains(e.target)
+        || e.target.closest('dialog, .toast, .stickybar, .mobile-bar, .booking, .sheet-overlay, .site-menu, .menu-overlay, .demo-badge, .hero')) return;
       const current = tabs.find((t) => t.classList.contains('is-open'));
       if (current) closeAndReturn(current);
     });
@@ -322,15 +367,22 @@
     // блок ушёл с экрана — карта сворачивается, видимая часть страницы не сдвигается
     new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting || !box.classList.contains('is-open')) return;
-      const above = entry.boundingClientRect.top < 0;
-      const before = document.documentElement.scrollHeight;
-      if (above) mapWrap.style.transition = 'none';
-      setOpen(false);
-      if (above) {
-        window.scrollBy({ top: document.documentElement.scrollHeight - before, behavior: 'instant' });
+      if (entry.boundingClientRect.top < 0) {
+        mapWrap.style.transition = 'none';
+        keepView(box, () => setOpen(false));
         requestAnimationFrame(() => { mapWrap.style.transition = ''; });
+      } else {
+        setOpen(false);
       }
     }).observe(box);
+
+    beforeAnchorJump((target) => {
+      if (box.classList.contains('is-open') && !box.contains(target)) {
+        mapWrap.style.transition = 'none';
+        setOpen(false);
+        requestAnimationFrame(() => { mapWrap.style.transition = ''; });
+      }
+    });
   }
 
   // Блик при наведении — у всех активных кнопок, как у «Найти номер» и «У меня есть промокод»
