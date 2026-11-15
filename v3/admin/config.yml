@@ -11,6 +11,9 @@ backend:
   name: github
   repo: bildnplus-ai/aktau-marina-bay-maket
   branch: main
+  # вход только по токену доступа. Кнопка «Войти через GitHub» требует отдельного сервера авторизации
+  # (Sveltia CMS Authenticator); когда его развернём — добавить oauth и base_url
+  auth_methods: [token]
   commit_messages:
     create: 'Админка: добавлено «{{slug}}» в «{{collection}}»'
     update: 'Админка: изменено «{{slug}}» в «{{collection}}»'
