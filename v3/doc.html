@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Демо-макет: не индексировать поисковиками -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Документы · Aktau Marina Bay</title>
+  <meta name="theme-color" content="#0a1f24">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+  <link rel="preload" href="fonts/montserrat-300-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/montserrat-400-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/mockup.css">
+</head>
+<body class="doc-page">
+  <a class="skip-link" href="#doc">Перейти к документу</a>
+  <header class="doc-head">
+    <div class="container doc-head__inner">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="" class="logo__icon" width="44" height="44">
+        <img src="images/logo2.png" alt="Aktau Marina Bay" class="logo__wordmark" width="180" height="28">
+      </a>
+      <a class="btn-glass btn-glass--sm" href="index.html">На сайт</a>
+    </div>
+  </header>
+
+  <main class="container doc" id="doc" tabindex="-1">
+    <nav class="doc__nav" aria-label="Документы"></nav>
+    <article class="doc__body">
+      <h1 class="doc__title">Документ</h1>
+      <p class="doc__updated" hidden></p>
+      <p class="doc__file" hidden><a class="btn-primary btn-primary--sm" href="#" download>Скачать файл</a></p>
+      <div class="doc__text"><p>Загрузка…</p></div>
+    </article>
+  </main>
+
+  <script src="js/doc.js"></script>
+</body>
+</html>

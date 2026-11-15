@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Корпоративный тариф",
+    "meta": "фиксированная цена на год · [[… ₸]] / ночь",
+    "description": "Корпоративная цена на весь год. Номера для ваших сотрудников — в приоритете при бронировании в высокий сезон.",
+    "image": "images/cards/rooms-2.webp",
+    "image_position": "50% 50%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  },
+  {
+    "title": "Конференц-зал",
+    "meta": "[[…]] м² · театр [[…]] · класс [[…]]",
+    "description": "Банкетная рассадка — [[…]] гостей. Проектор и звук.",
+    "image": "images/cards/biz-bg.webp",
+    "image_position": "70% 50%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  },
+  {
+    "title": "Документы и менеджер",
+    "meta": "договор · счёт · акт · ЭСФ",
+    "description": "Закрывающие документы — [[уточнить перечень]]. Все брони и вопросы компании — через одного менеджера.",
+    "image": "images/cards/restaurant-bg.webp",
+    "image_position": "10% 30%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  }
+]

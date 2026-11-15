@@ -1,0 +1,314 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# Админка сайта Aktau Marina Bay (Sveltia CMS).
+# Отель правит содержимое — тексты, цены, фото, акции. Оформление и анимации меняет только разработчик.
+# Каждое сохранение — коммит в репозиторий GitHub; GitHub Pages публикует его за 1–2 минуты.
+#
+# Пути указаны от корня репозитория bildnplus-ai/aktau-marina-bay-maket, где эта версия сайта лежит в папке v3/.
+# При переносе на домен отеля поменять: repo, site_url, папку v3/ в путях и public_folder.
+
+backend:
+  name: github
+  repo: bildnplus-ai/aktau-marina-bay-maket
+  branch: main
+  commit_messages:
+    create: 'Админка: добавлено «{{slug}}» в «{{collection}}»'
+    update: 'Админка: изменено «{{slug}}» в «{{collection}}»'
+    delete: 'Админка: удалено «{{slug}}» из «{{collection}}»'
+    uploadMedia: 'Админка: загружен файл «{{path}}»'
+    deleteMedia: 'Админка: удалён файл «{{path}}»'
+
+site_url: https://bildnplus-ai.github.io/aktau-marina-bay-maket/v3/
+display_url: https://bildnplus-ai.github.io/aktau-marina-bay-maket/v3/
+
+# Фото и файлы, загруженные через админку
+media_folder: v3/images/uploads
+public_folder: /aktau-marina-bay-maket/v3/images/uploads
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 15000000
+      # фото при загрузке автоматически сжимаются: формат WebP, не больше 2000 px по длинной стороне
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2000
+          height: 2000
+
+# Подсказка, которая повторяется во всех текстовых полях
+# Текст в [[двойных квадратных скобках]] на сайте подсвечивается как «ещё не заполнено» — удобно для черновиков.
+
+collections:
+  # ---------- Спецпредложения ----------
+  - name: offers
+    label: Спецпредложения
+    label_singular: спецпредложение
+    description: 'Акции и пакеты. Порядок в списке = порядок на сайте. После даты окончания акция скрывается сама. Текст в [[двойных скобках]] подсвечивается на сайте как незаполненный.'
+    file: v3/content/offers.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: image
+    fields:
+      - { name: title, label: Название, widget: string, maxlength: 80 }
+      - { name: badge, label: Метка на фото, widget: string, required: false, hint: 'Например: «Акция открытия», «Хит», «Новое».' }
+      - { name: featured, label: Выделить рамкой, widget: boolean, default: false, required: false }
+      - { name: image, label: Фото, widget: image }
+      - &image_position
+        name: image_position
+        label: Какую часть фото показывать
+        widget: string
+        default: 50% 50%
+        required: false
+        pattern: ['^\d{1,3}% \d{1,3}%$', 'Формат: два числа с %, например «50% 50%»']
+        hint: 'По горизонтали и вертикали: «50% 50%» — центр, «50% 20%» — ближе к верху, «20% 50%» — ближе к левому краю. Карточка обрезает фото по краям, это поле выбирает, что останется в кадре.'
+      - name: lines
+        label: Условия (пункты списка)
+        widget: list
+        field: { name: line, label: Пункт, widget: string }
+        hint: 'Каждый пункт — отдельной строкой, например «Завтрак: включён».'
+      - { name: price, label: Цена «от», widget: string, hint: 'Только сумма, «от» добавится само. Например: «45 000 ₸».' }
+      - { name: button_text, label: Текст кнопки, widget: string, default: Забронировать }
+      - { name: booking_name, label: Тариф или промокод в модуле бронирования, widget: string, required: false, hint: 'Как называется это предложение в Exely — чтобы кнопка открыла нужный тариф.' }
+      - { name: active_from, label: Действует с, widget: datetime, type: date, required: false, hint: 'Пусто — показывается сразу.' }
+      - { name: active_to, label: Действует по, widget: datetime, type: date, required: false, hint: 'Пусто — без срока. После этой даты акция пропадёт с сайта сама.' }
+      - &published
+        name: published
+        label: Показывать на сайте
+        widget: boolean
+        default: true
+        hint: Выключите, чтобы временно скрыть запись, не удаляя её.
+
+  # ---------- Номера ----------
+  - name: rooms
+    label: Номера
+    label_singular: категория номеров
+    description: 'Категории номеров (вкладыши на сайте) и номера внутри каждой. Порядок в списке = порядок на сайте.'
+    file: v3/content/rooms.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: cover
+    fields:
+      - { name: id, label: Код категории, widget: string, pattern: ['^[a-z0-9-]+$', 'Только латинские буквы, цифры и дефис'], hint: 'Латиницей, например «standard». У существующих категорий не меняйте.' }
+      - { name: title, label: Название категории, widget: string, maxlength: 40 }
+      - { name: facts, label: Главное о категории, widget: string, maxlength: 60, hint: 'Например: «1–2 гостя · 20–28 м²». Цена добавится сама из поля ниже.' }
+      - { name: price, label: Цена «от» за ночь, widget: string, hint: 'Только сумма, например «38 000 ₸».' }
+      - { name: subtitle, label: Короткое описание, widget: string, maxlength: 60 }
+      - { name: cover, label: Фото вкладыша, widget: image, hint: 'Вертикальное или квадратное — вкладыш высокий.' }
+      - { name: cover_position, label: Какую часть фото показывать, widget: string, default: 50% 50%, required: false, pattern: ['^\d{1,3}% \d{1,3}%$', 'Формат: «50% 50%»'] }
+      - &temp_photo
+        name: temp_photo
+        label: Пометка «Временное фото»
+        widget: boolean
+        default: false
+        required: false
+        hint: Включите, пока стоит фото-заглушка. Уберите, когда загрузите настоящее фото.
+      - name: rooms
+        label: Номера в категории
+        label_singular: номер
+        widget: list
+        summary: '{{name}}'
+        thumbnail: photo
+        fields:
+          - { name: name, label: Название, widget: string, maxlength: 50 }
+          - { name: name_en, label: Название на английском, widget: string, required: false }
+          - { name: guests, label: Гости, widget: string, hint: 'Например: «2 гостя + 1 доп.»' }
+          - { name: area, label: Площадь, widget: string, hint: 'Например: «28,1 м²»' }
+          - { name: feature, label: Особенность, widget: string, required: false, hint: 'Кровати, этажи, санузлы — например «2 раздельные кровати».' }
+          - { name: view, label: Вид из окна, widget: string, required: false, hint: 'Например: «на море», «на город». Показывается в таблице сравнения.' }
+          - { name: price, label: Цена «от» за ночь, widget: string }
+          - { name: short, label: Коротко (видно на карточке), widget: text, maxlength: 120 }
+          - { name: description, label: Подробное описание (окно «Подробнее»), widget: text, maxlength: 800 }
+          - { name: photo, label: Фото, widget: image }
+          - { name: photo_position, label: Какую часть фото показывать, widget: string, default: 50% 50%, required: false, pattern: ['^\d{1,3}% \d{1,3}%$', 'Формат: «50% 50%»'] }
+          - *temp_photo
+          - { name: exely_code, label: Код категории в Exely, widget: string, required: false, hint: 'Заполнит разработчик при подключении модуля бронирования.' }
+          - *published
+      - *published
+
+  # ---------- Карточки разделов ----------
+  - name: restaurant
+    label: Ресторан — карточки
+    label_singular: карточку ресторана
+    description: 'Карточки под описанием ресторана: залы, мероприятия, кухня.'
+    file: v3/content/restaurant.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: image
+    fields: &card_fields
+      - { name: title, label: Название, widget: string, maxlength: 60 }
+      - name: meta
+        label: Главное и цена (видно сразу)
+        widget: string
+        required: false
+        maxlength: 90
+        hint: 'Например: «60 мин · от 15 000 ₸» или «до 40 гостей · от 120 000 ₸».'
+      - name: description
+        label: Описание (выплывает при наведении)
+        widget: text
+        maxlength: 300
+        hint: 'Лучше всего до 200 знаков — тогда текст целиком помещается в карточку на телефоне.'
+      - { name: image, label: Фото, widget: image, hint: 'Горизонтальное или вертикальное, от 1200 px по ширине. Админка сама сожмёт его.' }
+      - *image_position
+      - *temp_photo
+      - { name: button_text, label: Текст кнопки, widget: string, required: false, hint: 'Необязательно. Например: «Подробнее у организатора».' }
+      - { name: button_link, label: Ссылка кнопки, widget: string, required: false, hint: 'Адрес страницы (https://…) или «#раздел» на этом сайте.' }
+      - *published
+
+  - name: fitness
+    label: Fit Revolution — процедуры
+    label_singular: процедуру
+    file: v3/content/fitness.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: image
+    fields: *card_fields
+
+  - name: business
+    label: Для бизнеса — карточки
+    label_singular: карточку
+    file: v3/content/business.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: image
+    fields: *card_fields
+
+  - name: tours
+    label: Туры по Мангистау
+    label_singular: тур
+    description: 'Туры партнёра. В «Ссылка кнопки» — страница тура у организатора.'
+    file: v3/content/tours.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    thumbnail: image
+    fields: *card_fields
+
+  # ---------- Отзывы ----------
+  - name: reviews
+    label: Отзывы
+    editor: { preview: false }
+    files:
+      - name: reviews
+        label: Отзывы гостей
+        file: v3/content/reviews.json
+        fields:
+          - { name: rating, label: Средняя оценка, widget: string, hint: 'Например: «4,8». На сайте выводится как «4,8 / 5».' }
+          - { name: sources, label: Где собраны отзывы, widget: string, hint: 'Например: «2ГИС · Google · Booking».' }
+          - name: items
+            label: Отзывы
+            label_singular: отзыв
+            widget: list
+            summary: '{{author}} — {{source}}'
+            fields:
+              - { name: text, label: Текст отзыва, widget: text, maxlength: 400 }
+              - { name: author, label: Имя гостя, widget: string }
+              - { name: date, label: Когда, widget: string, required: false, hint: 'Например: «октябрь 2026».' }
+              - { name: source, label: Источник, widget: string, required: false, hint: '2ГИС, Google, Booking, Яндекс…' }
+              - { name: rating, label: Оценка, widget: number, value_type: int, min: 1, max: 5, default: 5 }
+              - { name: link, label: Ссылка на оригинал, widget: string, required: false, hint: 'Ссылка на отзыв на площадке — повышает доверие.' }
+              - *published
+
+  # ---------- Частые вопросы ----------
+  - name: faq
+    label: Частые вопросы
+    label_singular: вопрос
+    file: v3/content/faq.json
+    identifier_field: question
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{question}}'
+    fields:
+      - { name: question, label: Вопрос, widget: string, maxlength: 100 }
+      - { name: answer, label: Ответ, widget: text, maxlength: 600 }
+      - *published
+
+  # ---------- Документы ----------
+  - name: documents
+    label: Документы
+    label_singular: документ
+    description: 'Договор-оферта, правила, политика конфиденциальности. Ссылки на них — в подвале сайта. Банк проверяет эти документы перед подключением онлайн-оплаты.'
+    file: v3/content/documents.json
+    identifier_field: title
+    create: true
+    delete: true
+    editor: { preview: false }
+    summary: '{{title}}'
+    fields:
+      - { name: slug, label: Код для ссылки, widget: string, pattern: ['^[a-z0-9-]+$', 'Только латинские буквы, цифры и дефис'], hint: 'Латиницей, например «oferta». Ссылка будет doc.html?d=oferta.' }
+      - { name: title, label: Название, widget: string }
+      - { name: updated, label: Дата редакции, widget: datetime, type: date, required: false }
+      - name: body
+        label: Текст документа
+        widget: richtext
+        buttons: [bold, link, heading-two, heading-three, bulleted-list, numbered-list]
+        editor_components: []
+        hint: 'Вставьте текст целиком. Заголовки разделов — кнопкой «Заголовок».'
+      - { name: file, label: Файл для скачивания (PDF), widget: file, required: false }
+      - *published
+
+  # ---------- Настройки ----------
+  - name: settings
+    label: Настройки сайта
+    editor: { preview: false }
+    files:
+      - name: settings
+        label: Контакты, соцсети, реквизиты
+        file: v3/content/settings.json
+        fields:
+          - name: contacts
+            label: Контакты
+            widget: object
+            fields:
+              - name: whatsapp
+                label: WhatsApp отеля
+                widget: string
+                required: false
+                pattern: ['^(\d{10,15})?$', 'Только цифры, с кодом страны, без + и пробелов: 77010000000']
+                hint: 'Только цифры с кодом страны: 77010000000. Пока пусто — кнопки WhatsApp показывают «номер уточняется».'
+              - { name: phone, label: Телефон для звонков, widget: string, required: false, hint: 'Как показывать на сайте: +7 (701) 000-00-00' }
+              - { name: email, label: Электронная почта, widget: string, required: false }
+              - { name: address, label: Адрес, widget: string }
+              - { name: airport_time, label: Сколько ехать из аэропорта, widget: string, required: false, hint: 'Например: «25 мин»' }
+              - { name: parking, label: Парковка, widget: string, required: false, hint: 'Например: «бесплатная, у входа»' }
+          - name: social
+            label: Соцсети (пусто — значок не показывается)
+            widget: object
+            fields:
+              - { name: telegram, label: Telegram, widget: string, required: false, hint: 'https://t.me/…' }
+              - { name: instagram, label: Instagram, widget: string, required: false, hint: 'https://instagram.com/…' }
+              - { name: vk, label: ВКонтакте, widget: string, required: false, hint: 'https://vk.com/…' }
+          - name: requisites
+            label: Реквизиты (подвал сайта; их проверяет банк)
+            widget: object
+            fields:
+              - { name: company, label: Организация, widget: string, hint: 'ИП или ТОО с названием' }
+              - { name: bin, label: БИН / ИИН, widget: string }
+              - { name: legal_address, label: Юридический адрес, widget: string }
+              - { name: bank, label: Банк, widget: string }
+              - { name: bik, label: БИК, widget: string }
+              - { name: iik, label: ИИК (счёт), widget: string }
+          - name: booking
+            label: Бронирование
+            widget: object
+            fields:
+              - { name: exely_url, label: Адрес модуля бронирования Exely, widget: string, required: false, hint: 'Заполнит разработчик при подключении Exely.' }

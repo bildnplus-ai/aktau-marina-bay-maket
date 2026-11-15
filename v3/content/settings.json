@@ -1,0 +1,26 @@
+{
+  "contacts": {
+    "whatsapp": "",
+    "phone": "",
+    "email": "",
+    "address": "г. Актау, Микрорайон 4А, 55",
+    "airport_time": "[[… мин]]",
+    "parking": "[[…]]"
+  },
+  "social": {
+    "telegram": "",
+    "instagram": "",
+    "vk": ""
+  },
+  "requisites": {
+    "company": "[[ИП / ТОО «…»]]",
+    "bin": "[[…]]",
+    "legal_address": "[[…]]",
+    "bank": "[[…]]",
+    "bik": "[[…]]",
+    "iik": "[[…]]"
+  },
+  "booking": {
+    "exely_url": ""
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "rating": "[[…]]",
+  "sources": "2ГИС · Google · Booking",
+  "items": [
+    {
+      "text": "Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.",
+      "author": "[[Имя гостя]]",
+      "date": "[[месяц, год]]",
+      "source": "2ГИС",
+      "rating": 5,
+      "link": "",
+      "published": true
+    },
+    {
+      "text": "Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.",
+      "author": "[[Имя гостя]]",
+      "date": "[[месяц, год]]",
+      "source": "Google",
+      "rating": 5,
+      "link": "",
+      "published": true
+    },
+    {
+      "text": "Здесь будет реальный отзыв гостя — подтягиваем из 2ГИС, Google или Booking со ссылкой на оригинал.",
+      "author": "[[Имя гостя]]",
+      "date": "[[месяц, год]]",
+      "source": "Booking",
+      "rating": 5,
+      "link": "",
+      "published": true
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+[
+  {
+    "title": "[[Цена открытия]] или [[3-я ночь в подарок]]",
+    "badge": "Акция открытия",
+    "featured": true,
+    "image": "images/cards/main.webp",
+    "image_position": "50% 50%",
+    "lines": [
+      "Для первых гостей отеля",
+      "Скидка / подарок: [[…]]",
+      "Категории: [[все / …]]",
+      "Действует: [[до …]]"
+    ],
+    "price": "[[… ₸]]",
+    "button_text": "Забронировать",
+    "booking_name": "Акция открытия",
+    "active_from": "",
+    "active_to": "",
+    "published": true
+  },
+  {
+    "title": "Выходные у Каспия",
+    "badge": "Пример",
+    "featured": false,
+    "image": "images/cards/why-1.webp",
+    "image_position": "50% 50%",
+    "lines": [
+      "Проживание: [[… ночи]]",
+      "Завтрак: [[включён]]",
+      "Поздний выезд: [[до … :00]]",
+      "Действует: [[… — …]]"
+    ],
+    "price": "[[… ₸]]",
+    "button_text": "Забронировать",
+    "booking_name": "Выходные у Каспия",
+    "active_from": "",
+    "active_to": "",
+    "published": true
+  },
+  {
+    "title": "Перезагрузка с Fit Revolution",
+    "badge": "Пример",
+    "featured": false,
+    "image": "images/cards/bio-1.webp",
+    "image_position": "50% 50%",
+    "lines": [
+      "Проживание: [[… ночи]]",
+      "Процедуры: [[… сеанса]]",
+      "Завтрак: [[включён]]",
+      "Действует: [[… — …]]"
+    ],
+    "price": "[[… ₸]]",
+    "button_text": "Забронировать",
+    "booking_name": "Перезагрузка с Fit Revolution",
+    "active_from": "",
+    "active_to": "",
+    "published": true
+  },
+  {
+    "title": "Отель + тур по Мангистау",
+    "badge": "Пример",
+    "featured": false,
+    "image": "images/cards/discover-bozzhyra.webp",
+    "image_position": "50% 50%",
+    "lines": [
+      "Проживание: [[… ночи]]",
+      "Тур партнёра: [[промокод …%]]",
+      "Трансфер: [[включён]]",
+      "Действует: [[… — …]]"
+    ],
+    "price": "[[… ₸]]",
+    "button_text": "Забронировать",
+    "booking_name": "Отель + тур по Мангистау",
+    "active_from": "",
+    "active_to": "",
+    "published": true
+  }
+]

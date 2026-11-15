@@ -1,0 +1,46 @@
+[
+  {
+    "title": "Панорамный вид на море",
+    "meta": "[[… мест]] · средний чек от [[… ₸]]",
+    "description": "Потрясающий обзор на Каспий, яхт-клуб и знаменитую Скальную тропу из любой точки зала",
+    "image": "images/cards/why-2.webp",
+    "image_position": "60% 50%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  },
+  {
+    "title": "VIP-кабинеты для приватных встреч",
+    "meta": "до [[…]] гостей · от [[… ₸]]",
+    "description": "Уединённые VIP-зоны с панорамными окнами для деловых встреч и камерных мероприятий",
+    "image": "images/cards/restaurant-bg.webp",
+    "image_position": "15% 40%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  },
+  {
+    "title": "Идеальная площадка для торжеств",
+    "meta": "до [[…]] гостей · банкет от [[… ₸]] / гость",
+    "description": "Безупречные условия для проведения свадеб, корпоративов, юбилеев и семейных торжеств",
+    "image": "images/cards/why-2.webp",
+    "image_position": "25% 85%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  },
+  {
+    "title": "Вкусная кухня и высокий сервис",
+    "meta": "ежедневно [[… — …]] · завтрак от [[… ₸]]",
+    "description": "Изысканная кухня и безупречный сервис для особых впечатлений",
+    "image": "images/cards/restaurant-bg.webp",
+    "image_position": "55% 92%",
+    "temp_photo": true,
+    "button_text": "",
+    "button_link": "",
+    "published": true
+  }
+]

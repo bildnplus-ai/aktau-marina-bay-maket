@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Экскурсии в урочище Бозжыра",
+    "meta": "[[… ч]] · от [[… ₸]]",
+    "description": "Путешествие к одному из самых впечатляющих природных символов Казахстана с панорамными видами на величественные меловые скалы и бескрайние просторы Мангистау. Уникальные ландшафты и захватывающие смотровые площадки делают эту поездку незабываемым впечатлением для каждого гостя.",
+    "image": "images/cards/discover-bozzhyra.webp",
+    "image_position": "50% 50%",
+    "temp_photo": false,
+    "button_text": "Подробнее у организатора",
+    "button_link": "#concierge",
+    "published": true
+  },
+  {
+    "title": "Посещение Бекет-Ата",
+    "meta": "[[… ч]] · от [[… ₸]]",
+    "description": "Паломничество к святыне и поездка к одному из главных духовных мест Мангистау с потрясающими видами на скалистое побережье",
+    "image": "images/cards/discover-beket-ata.webp",
+    "image_position": "50% 50%",
+    "temp_photo": false,
+    "button_text": "Подробнее у организатора",
+    "button_link": "#concierge",
+    "published": true
+  },
+  {
+    "title": "Морская рыбалка и прогулки",
+    "meta": "[[… ч]] · от [[… ₸]]",
+    "description": "Морские прогулки и рыбалка в Каспийском море с опытными гидами — отдых на воде и свежий улов",
+    "image": "images/cards/discover-fishing.webp",
+    "image_position": "50% 50%",
+    "temp_photo": false,
+    "button_text": "Подробнее у организатора",
+    "button_link": "#concierge",
+    "published": true
+  }
+]
