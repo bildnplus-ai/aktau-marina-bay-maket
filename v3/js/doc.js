@@ -5,13 +5,33 @@
   'use strict';
 
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const safeUrl = (u) => (/^(https?:\/\/|mailto:|tel:|#|[\w./-]+$)/i.test(u) ? u : '#');
+  function safeUrl(value) {
+    try {
+      const url = new URL(value, location.href);
+      return ['https:', 'http:', 'mailto:', 'tel:'].includes(url.protocol) ? value : '#';
+    } catch {
+      return '#';
+    }
+  }
 
-  function inline(s) {
-    return esc(s)
-      .replace(/\[\[(.+?)\]\]/g, '<span class="ph">$1</span>')
-      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
-      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, t, u) => `<a href="${esc(safeUrl(u))}">${t}</a>`);
+  function inline(value) {
+    const text = String(value ?? '');
+    const tokens = /\[\[(.+?)\]\]|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
+    let result = '';
+    let cursor = 0;
+    for (const match of text.matchAll(tokens)) {
+      const [token, placeholder, bold, label, url] = match;
+      result += esc(text.slice(cursor, match.index));
+      if (placeholder !== undefined) {
+        result += `<span class="ph">${inline(placeholder)}</span>`;
+      } else if (bold !== undefined) {
+        result += `<b>${inline(bold)}</b>`;
+      } else {
+        result += `<a href="${esc(safeUrl(url))}">${inline(label)}</a>`;
+      }
+      cursor = match.index + token.length;
+    }
+    return result + esc(text.slice(cursor));
   }
 
   function markdown(src) {
@@ -40,11 +60,19 @@
   fetch('content/documents.json', { cache: 'no-cache' })
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
     .then((docs) => {
-      const list = (docs || []).filter((d) => d.published !== false);
+      const list = Array.isArray(docs) ? docs.filter((d) => d && typeof d === 'object'
+        && typeof d.slug === 'string' && d.published !== false) : [];
       const slug = new URLSearchParams(location.search).get('d');
-      const doc = list.find((d) => d.slug === slug) || list[0];
+      const doc = slug === null ? list[0] : list.find((d) => d.slug === slug);
       document.querySelector('.doc__nav').innerHTML = list.map((d) => `<a href="?d=${encodeURIComponent(d.slug)}"${d === doc ? ' aria-current="page"' : ''}>${esc(String(d.title).replace(/\[\[|\]\]/g, ''))}</a>`).join('');
-      if (!doc) return;
+      if (!doc) {
+        document.title = 'Документ не найден · Aktau Marina Bay';
+        document.querySelector('.doc__title').textContent = 'Документ не найден';
+        document.querySelector('.doc__text').textContent = list.length
+          ? 'Выберите доступный документ из списка.'
+          : 'Опубликованных документов пока нет.';
+        return;
+      }
       const title = String(doc.title).replace(/\[\[|\]\]/g, '');
       document.title = `${title} · Aktau Marina Bay`;
       document.querySelector('.doc__title').innerHTML = inline(doc.title);
@@ -53,10 +81,14 @@
         u.textContent = `Редакция от ${new Date(doc.updated).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}`;
         u.hidden = false;
       }
-      if (doc.file) {
-        const f = document.querySelector('.doc__file');
-        f.querySelector('a').href = /^https?:/.test(doc.file) ? doc.file : img(doc.file).replace(/^images\//, 'images/');
-        f.hidden = false;
+      if (typeof doc.file === 'string' && doc.file.trim()) {
+        const file = /^https?:/i.test(doc.file) ? doc.file : img(doc.file);
+        const link = safeUrl(file);
+        if (link !== '#') {
+          const f = document.querySelector('.doc__file');
+          f.querySelector('a').href = link;
+          f.hidden = false;
+        }
       }
       document.querySelector('.doc__text').innerHTML = markdown(doc.body);
     })

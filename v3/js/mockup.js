@@ -6,55 +6,57 @@
   const mobile = window.matchMedia('(max-width: 900px)');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function notify(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-    // открытое окно перекрывает страницу — подсказку показываем внутри него
-    const host = document.querySelector('dialog[open]') || document.body;
-    if (toast.parentElement !== host) host.appendChild(toast);
-    toast.textContent = message;
-    toast.hidden = false;
-    requestAnimationFrame(() => toast.classList.add('is-visible'));
-    clearTimeout(notify._timer);
-    notify._timer = setTimeout(() => {
-      toast.classList.remove('is-visible');
-      setTimeout(() => { toast.hidden = true; }, 300);
-    }, 3200);
-  }
+  // Контакты заполняются в CMS. Пока данных нет, основные кнопки ведут к адресу отеля.
+  let whatsapp = '';
 
-  // Контакты отеля — из админки (Настройки → Контакты), их подставляет js/content.js.
-  // Пока номера не заполнены, кнопки WhatsApp и телефон показывают подсказку.
-  // (Номер +7 778 239-59-86 из старого сайта оказался чужим — не использовать.)
-  let HOTEL_WA = '';
-  let HOTEL_PHONE = '';
-
-  function setWaLink(a) {
-    if (!HOTEL_WA) return;
-    const text = a.dataset.waText;
-    a.href = `https://wa.me/${HOTEL_WA}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
-    a.target = '_blank';
-    a.rel = 'noopener';
+  function setWaLink(link) {
+    const text = link.dataset.waText;
+    link.href = `https://wa.me/${whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.hidden = false;
   }
 
   function initContacts() {
-    HOTEL_WA = window.HOTEL_CONTACTS?.whatsapp || '';
-    HOTEL_PHONE = window.HOTEL_CONTACTS?.phone || '';
-    document.querySelectorAll('[data-wa]').forEach(setWaLink);
-    if (HOTEL_PHONE) {
-      document.querySelectorAll('[data-tel]').forEach((a) => {
-        a.href = `tel:${HOTEL_PHONE.replace(/[^\d+]/g, '')}`;
-        a.textContent = HOTEL_PHONE;
-      });
-    }
-    document.addEventListener('click', (e) => {
-      if (!HOTEL_WA && e.target.closest('[data-wa]')) {
-        e.preventDefault();
-        notify('Номер WhatsApp отеля уточняется (макет)');
-      } else if (!HOTEL_PHONE && e.target.closest('[data-tel]')) {
-        e.preventDefault();
-        notify('Телефон отеля уточняется (макет)');
+    const contacts = window.HOTEL_CONTACTS || {};
+    const number = String(contacts.whatsapp || '');
+    whatsapp = /^\d{7,15}$/.test(number) ? number : '';
+    const dial = String(contacts.phone || '').replace(/[^\d+]/g, '');
+    const email = String(contacts.email || '').trim();
+    const hasPhone = /^\+?\d{7,15}$/.test(dial);
+    const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    document.querySelectorAll('[data-wa]').forEach((link) => {
+      if (whatsapp) {
+        setWaLink(link);
+        const row = link.closest('.cta-row');
+        if (row) row.hidden = false;
+        if (link.hasAttribute('data-contact-fallback')) link.textContent = 'WhatsApp';
+      } else if (!link.hasAttribute('data-contact-fallback')) {
+        (link.closest('.cta-row') || link).hidden = true;
       }
     });
+    document.querySelectorAll('[data-tel]').forEach((link) => {
+      link.hidden = !hasPhone;
+      if (hasPhone) {
+        link.href = `tel:${dial}`;
+        link.textContent = contacts.phone;
+      }
+    });
+    document.querySelectorAll('[data-email]').forEach((link) => {
+      link.hidden = !hasEmail;
+      if (hasEmail) link.href = `mailto:${email}`;
+    });
+    document.getElementById('contact-status').hidden = Boolean(whatsapp || hasPhone || hasEmail);
+    document.querySelector('[data-needs-whatsapp]').hidden = !whatsapp;
+
+    // В карточке номера можно использовать любой опубликованный канал.
+    const ask = document.querySelector('.room-dialog__ask');
+    if (!whatsapp && (hasPhone || hasEmail)) {
+      ask.hidden = false;
+      ask.href = hasPhone ? `tel:${dial}` : `mailto:${email}`;
+      ask.textContent = hasPhone ? 'Позвонить' : 'Написать на e-mail';
+    }
   }
 
   // Закреплённая шапка появляется, когда первый экран ушёл из вида
@@ -70,57 +72,139 @@
       bar.inert = !visible;
     }, { rootMargin: '-120px 0px 0px 0px' });
     observer.observe(hero);
-
-    // кнопка меню в закреплённой шапке открывает то же меню, что и на первом экране
-    bar.querySelector('[data-open-menu]')?.addEventListener('click', () => {
-      document.querySelector('.hero .menu-btn')?.click();
-    });
   }
 
   // «Выбрать даты» / «Забронировать»: на телефоне — панель снизу, на компьютере — форма на первом экране
   function initDatesSheet() {
     const sheet = document.getElementById('booking-sheet');
     const overlay = document.getElementById('sheet-overlay');
-    if (!sheet || !overlay) return;
+    const selection = document.getElementById('booking-selection');
+    const checkin = sheet.querySelector('[data-booking-trigger="checkin"]');
+    const viewport = window.visualViewport;
+    let opener = null;
+    let focusTimer = null;
+    const isOpen = () => sheet.classList.contains('is-open');
 
-    function open() {
+    function fitViewport() {
+      if (!viewport || !isOpen()) return;
+      sheet.style.setProperty('--booking-viewport-height', `${viewport.height}px`);
+      const covered = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+      sheet.style.setProperty('--booking-viewport-bottom', `${covered}px`);
+    }
+
+    viewport?.addEventListener('scroll', fitViewport);
+    viewport?.addEventListener('resize', () => {
+      fitViewport();
+      if (isOpen() && document.activeElement.id === 'promo-input') {
+        document.activeElement.closest('.booking-dropdown').scrollIntoView({ block: 'nearest' });
+      }
+    });
+
+    function closePopups() {
+      sheet.dispatchEvent(new Event('booking:close-popups'));
+    }
+
+    function open(source) {
+      clearTimeout(focusTimer);
       if (mobile.matches) {
+        opener = source;
         sheet.classList.add('is-open');
+        sheet.setAttribute('role', 'dialog');
+        sheet.setAttribute('aria-modal', 'true');
+        sheet.setAttribute('aria-labelledby', 'booking-sheet-title');
         overlay.hidden = false;
         document.body.classList.add('menu-open', 'dates-open');
-        sheet.querySelector('[data-booking-trigger="checkin"]')?.focus({ preventScroll: true });
+        fitViewport();
+        sheet.scrollTop = 0;
+        checkin.focus({ preventScroll: true });
       } else {
         document.getElementById('hero').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
-        setTimeout(() => sheet.querySelector('[data-booking-trigger="checkin"]')?.focus({ preventScroll: true }), 500);
+        focusTimer = setTimeout(() => checkin.focus({ preventScroll: true }), reduceMotion ? 0 : 500);
       }
     }
 
-    function close() {
+    function close(restoreFocus = true) {
+      if (!isOpen()) return;
+      closePopups();
       sheet.classList.remove('is-open');
+      sheet.removeAttribute('role');
+      sheet.removeAttribute('aria-modal');
+      sheet.removeAttribute('aria-labelledby');
       overlay.hidden = true;
       document.body.classList.remove('menu-open', 'dates-open');
+      if (restoreFocus) opener?.focus({ preventScroll: true });
+      opener = null;
     }
 
     document.querySelectorAll('[data-open-dates]').forEach((el) => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        open();
+        open(el);
       });
     });
-    document.querySelectorAll('[data-close-dates]').forEach((el) => el.addEventListener('click', close));
-
-    // нижняя панель на телефоне: появляется, как только кнопка первого экрана ушла из вида, и дальше всегда на месте
-    const heroBtn = document.querySelector('.hero__dates-btn');
-    if (heroBtn) {
-      new IntersectionObserver(([entry]) => {
-        document.body.classList.toggle('bar-on', !entry.isIntersecting);
-      }).observe(heroBtn);
-    }
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && sheet.classList.contains('is-open')) close();
+    document.querySelectorAll('[data-close-dates]').forEach((el) => el.addEventListener('click', () => close()));
+    sheet.querySelector('[data-booking-contacts]').addEventListener('click', () => {
+      close(false);
+      document.getElementById('location').querySelector('h2').focus({ preventScroll: true });
     });
-    mobile.addEventListener('change', () => { if (!mobile.matches) close(); });
+
+    document.addEventListener('click', (e) => {
+      const button = e.target.closest('.rc__btn[data-room-name]');
+      if (!button) return;
+      selection.textContent = `Вы выбрали: ${button.dataset.roomName}`;
+      selection.hidden = false;
+      sheet.dispatchEvent(new Event('booking:select-room'));
+      const dialog = button.closest('dialog[open]');
+      if (dialog) {
+        dialog.addEventListener('close', () => open(document.activeElement), { once: true });
+        dialog.close();
+      } else {
+        open(button);
+      }
+    });
+
+    const heroBtn = document.querySelector('.hero__dates-btn');
+    const mobileBar = document.querySelector('.mobile-bar');
+    new IntersectionObserver(([entry]) => {
+      const visible = !entry.isIntersecting;
+      mobileBar.inert = !visible;
+      document.body.classList.toggle('bar-on', visible);
+    }).observe(heroBtn);
+
+    document.addEventListener('keydown', (e) => {
+      if (!isOpen()) return;
+      const popup = sheet.querySelector('.booking-dropdown:not([hidden])');
+      if (e.key === 'Escape') {
+        e.stopImmediatePropagation();
+        if (popup) {
+          const trigger = sheet.querySelector('[aria-expanded="true"]');
+          closePopups();
+          trigger?.focus();
+        } else {
+          close();
+        }
+      } else if (e.key === 'Tab') {
+        const focusable = [...(popup?.id === 'dates-dropdown' ? popup : sheet)
+          .querySelectorAll('button:not([disabled]), input:not([tabindex="-1"]), a[href]')]
+          .filter((element) => element.getClientRects().length);
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!focusable.includes(document.activeElement) || (e.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+        }
+      }
+    }, true);
+
+    mobile.addEventListener('change', () => {
+      closePopups();
+      clearTimeout(focusTimer);
+      if (isOpen()) {
+        close(false);
+        checkin.focus({ preventScroll: true });
+      }
+    });
   }
 
   // Высота закреплённой шапки — чтобы при прокрутке к блоку он не прятался под ней
@@ -288,21 +372,22 @@
 
   // Все ленты (спецпредложения, услуги, туры, отзывы) — одинаковые стрелки «назад / вперёд» под лентой
   // со счётчиком. Если всё помещается на экране, стрелки скрываются. Пальцем листать тоже можно.
-  function initCarousels() {
+  function initCarousels(section) {
     const arrow = (d) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="${d}"/></svg>`;
-    const list = [
-      { scroller: '.offers__grid', items: '.offers__grid', after: '.offers__grid', label: 'спецпредложения' },
-      { scroller: '.services__viewport', items: '.services__track', after: '#services-carousel', label: 'услуги' },
-      { scroller: '.discover__viewport', items: '.discover__track', after: '#discover-carousel', label: 'туры', inContainer: true },
-      { scroller: '.reviews__grid', items: '.reviews__grid', after: '.reviews__grid', label: 'отзывы' },
-      { scroller: '#restaurant-cards', items: '#restaurant-cards', after: '#restaurant-cards', label: 'ресторан' },
-      { scroller: '#business-cards', items: '#business-cards', after: '#business-cards', label: 'для бизнеса' },
-      // номера — во всех категориях, сколько бы их ни завёл отель в админке
-      ...[...document.querySelectorAll('.room-tab')].map((tab) => {
-        const sel = `.room-tab[data-group="${CSS.escape(tab.dataset.group)}"] .rt-list`;
-        return { scroller: sel, items: sel, after: sel, label: 'номера', keepSpace: true };
-      }),
-    ];
+    const config = {
+      offers: { scroller: '.offers__grid', items: '.offers__grid', after: '.offers__grid', label: 'спецпредложения' },
+      fitness: { scroller: '.services__viewport', items: '.services__track', after: '#services-carousel', label: 'услуги' },
+      tours: { scroller: '.discover__viewport', items: '.discover__track', after: '#discover-carousel', label: 'туры', inContainer: true },
+      reviews: { scroller: '.reviews__grid', items: '.reviews__grid', after: '.reviews__grid', label: 'отзывы' },
+      restaurant: { scroller: '#restaurant-cards', items: '#restaurant-cards', after: '#restaurant-cards', label: 'ресторан' },
+      business: { scroller: '#business-cards', items: '#business-cards', after: '#business-cards', label: 'для бизнеса' },
+    };
+    const list = section === 'rooms'
+      ? [...document.querySelectorAll('.room-tab')].map((tab) => {
+        const selector = `.room-tab[data-group="${CSS.escape(tab.dataset.group)}"] .rt-list`;
+        return { scroller: selector, items: selector, after: selector, label: 'номера', keepSpace: true };
+      })
+      : [config[section]];
 
     list.forEach((cfg) => {
       const scroller = document.querySelector(cfg.scroller);
@@ -310,6 +395,7 @@
       const anchor = document.querySelector(cfg.after);
       if (!scroller || !track || !anchor) return;
       const items = [...track.children];
+      if (!items.length) return;
 
       const nav = document.createElement('div');
       nav.className = 'cnav';
@@ -337,6 +423,7 @@
         if (cfg.keepSpace) nav.classList.toggle('is-static', max <= 2);
         else nav.hidden = max <= 2;
         const s = step();
+        if (s <= 0) return;
         const visible = Math.max(1, Math.round(scroller.clientWidth / s));
         const pages = Math.max(1, items.length - visible + 1);
         const page = Math.min(pages, Math.round(scroller.scrollLeft / s) + 1);
@@ -432,8 +519,8 @@
 
   // Карточки ресторана, Fit Revolution, бизнеса и туров: на компьютере описание проявляется при наведении,
   // на телефоне — по нажатию на карточку (повторное нажатие или нажатие мимо — скрывает)
-  function initInfoCards() {
-    const cards = [...document.querySelectorAll('.icard')];
+  function initInfoCards(section) {
+    const cards = section.querySelectorAll('.icard');
     if (!cards.length) return;
     const hoverDevice = window.matchMedia('(hover: hover)');
     // описание занимает место от верха карточки до блока с названием — знаем высоту этого блока
@@ -458,7 +545,8 @@
       card.addEventListener('click', (e) => {
         if (hoverDevice.matches || e.target.closest('a, button')) return;
         const on = !card.classList.contains('is-open');
-        cards.forEach((c) => c.classList.toggle('is-open', c === card && on));
+        document.querySelectorAll('.icard.is-open').forEach((item) => item.classList.remove('is-open'));
+        card.classList.toggle('is-open', on);
       });
       card.addEventListener('keydown', (e) => {
         if (e.target !== card || (e.key !== 'Enter' && e.key !== ' ')) return;
@@ -472,8 +560,8 @@
   }
 
   // Блик при наведении — у всех активных кнопок, как у «Найти номер» и «У меня есть промокод»
-  function initShimmer() {
-    document.querySelectorAll('.rc__btn, .btn-glass, .mobile-bar__book, .booking-dropdown__done')
+  function initShimmer(root = document) {
+    root.querySelectorAll('.rc__btn, .btn-glass, .mobile-bar__book, .booking-dropdown__done')
       .forEach((btn) => btn.classList.add('btn-shimmer'));
   }
 
@@ -490,6 +578,7 @@
         const name = card.querySelector('.rt-room__title').textContent.trim();
         opener = btn;
         q('.room-dialog__img').src = card.dataset.img;
+        q('.room-dialog__img').alt = `Фото категории «${name}»`;
         q('.room-dialog__img').style.objectPosition = card.dataset.pos;
         q('.room-dialog__en').textContent = card.querySelector('.rc__en').textContent;
         q('.room-dialog__title').textContent = name;
@@ -498,7 +587,9 @@
         q('.room-dialog__text').textContent = card.querySelector('.rc3__full').content.textContent.trim();
         q('.room-dialog__book').dataset.roomName = name;
         q('.room-dialog__ask').dataset.waText = `Здравствуйте! Вопрос по номеру «${name}» в Aktau Marina Bay.`;
-        setWaLink(q('.room-dialog__ask'));
+        if (whatsapp) setWaLink(q('.room-dialog__ask'));
+        q('.room-dialog__foot .rc__price').textContent = card.querySelector('.rc__price').textContent;
+        q('.room-dialog__media .rc__badge').hidden = !card.querySelector('.rt-room__photo .rc__badge');
         q('.room-dialog__body').scrollTop = 0;
         dialog.showModal();
         document.body.classList.add('menu-open');
@@ -630,14 +721,12 @@
     const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     const SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'нояб', 'дек'];
     const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
-    const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
-    const nights = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+    const iso = (date) => date.toISOString().slice(0, 10);
+    const parse = (day) => new Date(`${day}T00:00:00Z`);
+    const addDays = (day, count) => iso(new Date(+parse(day) + count * 864e5));
+    const nights = (from, to) => (parse(to) - parse(from)) / 864e5;
     const nightWord = (n) => (n % 10 === 1 && n % 100 !== 11 ? 'ночь' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'ночи' : 'ночей');
-    const label = (s) => { const d = parse(s); return `${d.getDate()} ${SHORT[d.getMonth()]}`; };
-    const today = iso(new Date());
-    const maxDate = addDays(today, 365);
+    const label = (s) => { const d = parse(s); return `${d.getUTCDate()} ${SHORT[d.getUTCMonth()]}`; };
     const twoMonths = window.matchMedia('(min-width: 901px)');
 
     const pop = document.createElement('div');
@@ -651,6 +740,9 @@
       + '<div class="cal__months"></div>'
       + '<div class="cal__foot"><p class="cal__summary" aria-live="polite"></p><button class="btn-primary btn-primary--sm cal__done" type="button">Готово</button></div>';
     booking.appendChild(pop);
+    booking.querySelectorAll('[data-booking-trigger="checkin"], [data-booking-trigger="checkout"]').forEach((button) => {
+      button.setAttribute('aria-controls', pop.id);
+    });
     const monthsBox = pop.querySelector('.cal__months');
     const hint = pop.querySelector('.cal__hint');
     const summary = pop.querySelector('.cal__summary');
@@ -660,35 +752,55 @@
     let view = null;
     let hoverDay = null;
     let trigger = null;
+    const monthCount = () => twoMonths.matches ? 2 : 1;
+    const monthOf = (day) => parse(day.slice(0, 8) + '01');
+    const shiftMonth = (month, steps) => new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + steps, 1));
+    const firstDay = () => mode === 'end' ? addDays(start, 1) : inInput.min;
+    const lastDay = () => mode === 'end' ? outInput.max : inInput.max;
+
+    function paintRange() {
+      const rangeEnd = hoverDay || end;
+      monthsBox.querySelectorAll('.cal__day').forEach((button) => {
+        const day = button.dataset.day;
+        const cell = button.parentElement;
+        cell.classList.toggle('is-start', day === start);
+        cell.classList.toggle('is-end', day === rangeEnd);
+        cell.classList.toggle('in-range', Boolean(rangeEnd && day > start && day < rangeEnd));
+        cell.classList.toggle('has-range', Boolean(rangeEnd));
+        cell.classList.toggle('is-preview', Boolean(hoverDay && day > start && day <= hoverDay));
+      });
+    }
 
     function render() {
-      const count = twoMonths.matches ? 2 : 1;
-      const rangeEnd = end || (mode === 'end' && hoverDay && hoverDay > start ? hoverDay : null);
+      const count = monthCount();
+      const min = firstDay();
+      const max = lastDay();
+      const firstView = monthOf(min);
+      const lastView = Math.max(firstView, shiftMonth(monthOf(max), 1 - count));
+      view = new Date(Math.min(lastView, Math.max(firstView, view)));
       let html = '';
       for (let m = 0; m < count; m += 1) {
-        const first = new Date(view.getFullYear(), view.getMonth() + m, 1);
-        const offset = (first.getDay() + 6) % 7;
-        const daysIn = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
-        html += `<div class="cal__month"><p class="cal__title">${MONTHS[first.getMonth()]} ${first.getFullYear()}</p><div class="cal__grid">`;
+        const first = shiftMonth(view, m);
+        const offset = (first.getUTCDay() + 6) % 7;
+        const year = first.getUTCFullYear();
+        const month = first.getUTCMonth();
+        const daysIn = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        html += `<div class="cal__month"><p class="cal__title">${MONTHS[month]} ${year}</p><div class="cal__grid">`;
         html += DAYS.map((d) => `<span class="cal__wd">${d}</span>`).join('');
         html += '<span class="cal__cell"></span>'.repeat(offset);
         for (let d = 1; d <= daysIn; d += 1) {
-          const day = iso(new Date(first.getFullYear(), first.getMonth(), d));
-          const off = day < today || day > maxDate;
-          const cls = ['cal__cell'];
-          if (day === start) cls.push('is-start');
-          if (rangeEnd && day === rangeEnd) cls.push(end ? 'is-end' : 'is-end is-preview');
-          if (rangeEnd && day > start && day < rangeEnd) cls.push(end ? 'in-range' : 'in-range is-preview');
-          if (start && rangeEnd) cls.push('has-range');
-          html += `<span class="${cls.join(' ')}"><button class="cal__day${day === today ? ' is-today' : ''}" type="button" data-day="${day}"${off ? ' disabled' : ''} aria-label="${d} ${SHORT[first.getMonth()]}"${day === start || day === end ? ' aria-pressed="true"' : ''}>${d}</button></span>`;
+          const day = iso(new Date(Date.UTC(year, month, d)));
+          const disabled = day < min || day > max;
+          html += `<span class="cal__cell"><button class="cal__day${day === inInput.min ? ' is-today' : ''}" type="button" data-day="${day}"${disabled ? ' disabled' : ''} aria-label="${d} ${SHORT[month]} ${year}" aria-pressed="${day === start || day === end}">${d}</button></span>`;
         }
         html += '</div></div>';
       }
       monthsBox.innerHTML = html;
+      paintRange();
       hint.textContent = mode === 'start' ? 'Выберите дату заезда' : 'Выберите дату выезда';
       summary.textContent = end ? `${label(start)} — ${label(end)} · ${nights(start, end)} ${nightWord(nights(start, end))}` : `Заезд ${label(start)} · выберите выезд`;
-      const firstView = new Date(view.getFullYear(), view.getMonth(), 1);
-      pop.querySelector('[data-dir="-1"]').disabled = iso(firstView) <= today.slice(0, 8) + '01';
+      pop.querySelector('[data-dir="-1"]').disabled = view <= firstView;
+      pop.querySelector('[data-dir="1"]').disabled = view >= lastView;
     }
 
     function apply() {
@@ -699,15 +811,15 @@
     }
 
     function open(which, btn) {
+      booking.dispatchEvent(new Event('booking:close-popups'));
+      booking.dispatchEvent(new Event('booking:sync-dates'));
       start = inInput.value;
       end = outInput.value;
       mode = which;
-      const base = parse(which === 'end' ? end : start);
-      view = new Date(base.getFullYear(), base.getMonth(), 1);
+      hoverDay = null;
+      view = monthOf(which === 'end' ? end : start);
       trigger = btn;
-      // закрыть выбор гостей и промокод
-      booking.querySelectorAll('.booking-dropdown').forEach((d) => { if (d !== pop) d.hidden = true; });
-      booking.querySelectorAll('[data-booking-trigger]').forEach((b) => { b.classList.toggle('is-active', b === btn); });
+      btn.classList.add('is-active');
       // на компьютере календарь открывается над полем «Заезд»
       if (twoMonths.matches) {
         const field = booking.querySelector('[data-booking-trigger="checkin"]');
@@ -718,17 +830,19 @@
       render();
       pop.hidden = false;
       btn.setAttribute('aria-expanded', 'true');
-      pop.querySelector(`[data-day="${which === 'end' ? end : start}"]`)?.focus({ preventScroll: true });
+      const selected = pop.querySelector(`[data-day="${which === 'end' ? end : start}"]:enabled`);
+      (selected || pop.querySelector('.cal__day:enabled') || pop.querySelector('.cal__done')).focus();
     }
 
-    function close() {
+    function close(restoreFocus = true) {
       if (pop.hidden) return;
-      if (!end) end = addDays(start, 1);
-      apply();
       pop.hidden = true;
-      booking.querySelectorAll('[data-booking-trigger]').forEach((b) => b.classList.remove('is-active'));
-      trigger?.setAttribute('aria-expanded', 'false');
+      trigger.classList.remove('is-active');
+      trigger.setAttribute('aria-expanded', 'false');
+      if (restoreFocus) trigger.focus({ preventScroll: true });
     }
+
+    booking.addEventListener('booking:close-popups', () => close(false), { capture: true });
 
     // поля «Заезд» и «Выезд» открывают этот календарь вместо встроенного
     document.addEventListener('click', (e) => {
@@ -744,36 +858,50 @@
       const b = e.target.closest('.cal__day');
       if (!b || b.disabled) return;
       const day = b.dataset.day;
-      if (mode === 'start' || day <= start) {
-        start = day;
-        end = null;
-        mode = 'end';
-        render();
-        monthsBox.querySelector(`[data-day="${day}"]`)?.focus({ preventScroll: true });
-      } else {
+      if (mode === 'end') {
         end = day;
-        mode = 'start';
-        render();
-        setTimeout(close, 280);
+        confirm();
+        return;
       }
+      start = day;
+      end = null;
+      hoverDay = null;
+      mode = 'end';
+      view = monthOf(addDays(start, 1));
+      render();
+      monthsBox.querySelector('.cal__day:enabled').focus();
     });
+
     monthsBox.addEventListener('mouseover', (e) => {
-      const b = e.target.closest('.cal__day');
-      if (mode !== 'end' || !b || b.dataset.day === hoverDay) return;
-      hoverDay = b.dataset.day;
-      render();
+      if (mode !== 'end') return;
+      const day = e.target.closest('.cal__day:enabled')?.dataset.day || null;
+      if (day === hoverDay) return;
+      hoverDay = day;
+      paintRange();
     });
-    pop.querySelectorAll('.cal__nav').forEach((b) => b.addEventListener('click', () => {
-      view = new Date(view.getFullYear(), view.getMonth() + Number(b.dataset.dir), 1);
+    monthsBox.addEventListener('mouseleave', () => {
+      if (!hoverDay) return;
+      hoverDay = null;
+      paintRange();
+    });
+
+    pop.querySelectorAll('.cal__nav').forEach((button) => button.addEventListener('click', () => {
+      view = shiftMonth(view, Number(button.dataset.dir));
+      hoverDay = null;
       render();
+      if (button.disabled) monthsBox.querySelector('.cal__day:enabled').focus();
     }));
-    pop.querySelector('.cal__done').addEventListener('click', close);
+    function confirm() {
+      apply();
+      close();
+    }
+
+    pop.querySelector('.cal__done').addEventListener('click', confirm);
     // нажатия внутри календаря не уходят наружу: при перерисовке дней старый обработчик
     // бронирования принимал их за «нажатие мимо» и прятал календарь, не сохранив даты
     pop.addEventListener('click', (e) => e.stopPropagation());
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-    document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('.booking')) close(); });
-    twoMonths.addEventListener('change', () => { if (!pop.hidden) render(); });
+    document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('.booking')) close(false); });
   }
 
   // Номера на компьютере: карточки во вкладыше листаются колёсиком мыши (одно движение — одна карточка).
@@ -806,23 +934,31 @@
     const toggle = document.querySelector('.rooms-compare__toggle');
     const tbody = box?.querySelector('tbody');
     if (!box || !toggle || !tbody) return;
+    const closedLabel = toggle.textContent;
     const labels = ['Номер', 'Гости', 'Площадь', 'Особенности', 'Вид', 'Цена за ночь', ''];
     const label = (i) => (labels[i] ? ` data-label="${labels[i]}"` : '');
 
     document.querySelectorAll('.room-tab').forEach((tab) => {
       const group = tab.querySelector('.room-tab__title').firstChild.textContent.trim();
-      tbody.insertAdjacentHTML('beforeend', `<tr class="rooms-compare__group"><th colspan="7" scope="rowgroup">${group}</th></tr>`);
+      const groupRow = tbody.insertRow();
+      groupRow.className = 'rooms-compare__group';
+      const heading = document.createElement('th');
+      heading.scope = 'rowgroup';
+      heading.colSpan = 7;
+      heading.textContent = group;
+      groupRow.appendChild(heading);
       tab.querySelectorAll('.rt-room').forEach((room) => {
-        const chips = [...room.querySelectorAll('.rc__chips li')].map((li) => li.innerHTML);
-        const name = room.querySelector('.rt-room__title').textContent.trim();
+        const fact = (key) => room.querySelector(`[data-room-fact="${key}"]`)?.innerHTML || '—';
+        const title = room.querySelector('.rt-room__title');
         const row = document.createElement('tr');
-        row.innerHTML = `<td class="rooms-compare__cell-name"${label(0)}><span class="rooms-compare__name"><small>${room.querySelector('.rc__en').textContent}</small>${name}</span></td>`
-          + `<td${label(1)}>${chips[0] || '—'}</td>`
-          + `<td${label(2)}>${chips[1] || '—'}</td>`
-          + `<td${label(3)}>${chips[2] || '—'}</td>`
+        row.innerHTML = `<td class="rooms-compare__cell-name"${label(0)}><span class="rooms-compare__name"><small>${room.querySelector('.rc__en').innerHTML}</small>${title.innerHTML}</span></td>`
+          + `<td${label(1)}>${fact('guests')}</td>`
+          + `<td${label(2)}>${fact('area')}</td>`
+          + `<td${label(3)}>${fact('feature')}</td>`
           + `<td${label(4)}>${room.dataset.view ? (window.contentText || ((v) => v))(room.dataset.view) : '—'}</td>`
           + `<td${label(5)}><span>${room.querySelector('.rc__price').innerHTML}</span></td>`
-          + `<td class="rooms-compare__cell-actions"><span class="rooms-compare__actions"><button class="btn-glass btn-glass--sm" type="button">Подробнее</button><button class="rc__btn" type="button" data-room-name="${name}">Выбрать</button></span></td>`;
+          + `<td class="rooms-compare__cell-actions"><span class="rooms-compare__actions"><button class="btn-glass btn-glass--sm" type="button">Подробнее</button><button class="rc__btn" type="button">Выбрать</button></span></td>`;
+        row.querySelector('.rc__btn').dataset.roomName = title.textContent.trim();
         // «Подробнее» — то же окно, что и у номера во вкладыше
         row.querySelector('.btn-glass').addEventListener('click', () => room.querySelector('.btn-glass[data-room-more]')?.click());
         tbody.appendChild(row);
@@ -834,58 +970,99 @@
       box.classList.toggle('is-open', on);
       box.inert = !on;
       toggle.setAttribute('aria-expanded', on ? 'true' : 'false');
-      toggle.textContent = on ? 'Скрыть сравнение' : 'Сравнить все 9 номеров';
+      toggle.textContent = on ? 'Скрыть сравнение' : closedLabel;
       if (on) {
         setTimeout(() => box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' }), 450);
       }
     });
   }
 
-  // «Выбрать» / «Забронировать» в карточках: в рабочей версии откроет Exely на нужной категории
-  function initBookButtons() {
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.rc__btn');
-      if (!btn) return;
-      notify(`Здесь откроется модуль Exely: «${btn.dataset.roomName}» (макет)`);
-    });
-  }
-
-  // Слайд-шоу на первом экране — вариант для сравнения (п. 2, на рассмотрении)
+  // Карусель на первом экране.
   function initSlides() {
     const toggle = document.getElementById('slides-toggle');
     const slides = [...document.querySelectorAll('.hero-slides__slide')];
     const caption = document.getElementById('slides-caption');
-    if (!toggle || !slides.length || !caption) return;
-    let index = 0;
+    if (!toggle || slides.length < 2 || !caption) return;
+
+    const interval = 5000;
+    const preference = new URLSearchParams(location.search).get('slides');
+    let playing = preference === '1' || (!reduceMotion && preference !== '0');
+    let inView = false;
+    let hovered = false;
+    let cursor = 0;
     let timer = null;
+    const imageReady = new Map();
 
-    function show(i) {
-      slides.forEach((s, n) => s.classList.toggle('is-active', n === i));
-      caption.textContent = `${slides[i].dataset.caption} →`;
-      caption.href = slides[i].dataset.target;
-    }
-
-    function setOn(on) {
-      document.body.classList.toggle('slides-on', on);
-      toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
-      toggle.textContent = `Слайд-шоу: ${on ? 'вкл' : 'выкл'}`;
-      caption.hidden = !on;
-      clearInterval(timer);
-      if (on) {
-        show(index);
-        if (!reduceMotion) {
-          timer = setInterval(() => { index = (index + 1) % slides.length; show(index); }, 6000);
-        }
+    function prepare(slide) {
+      if (!imageReady.has(slide)) {
+        const image = new Image();
+        image.src = slide.dataset.image;
+        imageReady.set(slide, image.decode().then(() => true, () => false));
       }
+      return imageReady.get(slide);
     }
 
-    toggle.addEventListener('click', () => setOn(!document.body.classList.contains('slides-on')));
-    setOn(new URLSearchParams(location.search).get('slides') === '1');
+    function show(index) {
+      const slide = slides[index];
+      slide.style.backgroundImage = `url("${slide.dataset.image}")`;
+      slides.forEach((item) => item.classList.toggle('is-active', item === slide));
+      caption.textContent = `${slide.dataset.caption} →`;
+      caption.href = slide.dataset.target;
+    }
+
+    function schedule() {
+      clearTimeout(timer);
+      timer = null;
+      if (!playing || !inView || hovered || document.hidden || document.activeElement === caption) return;
+      const next = (cursor + 1) % slides.length;
+      const ready = prepare(slides[next]);
+      const scheduled = setTimeout(async () => {
+        const loaded = await ready;
+        if (timer !== scheduled) return;
+        cursor = next;
+        if (loaded) show(next);
+        schedule();
+      }, interval);
+      timer = scheduled;
+    }
+
+    function updateControl() {
+      toggle.textContent = playing ? 'Пауза' : 'Продолжить';
+      toggle.setAttribute('aria-label', playing ? 'Приостановить слайд-шоу' : 'Продолжить слайд-шоу');
+      schedule();
+    }
+
+    toggle.addEventListener('click', () => {
+      playing = !playing;
+      updateControl();
+    });
+    caption.addEventListener('pointerenter', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      hovered = true;
+      schedule();
+    });
+    caption.addEventListener('pointerleave', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      hovered = false;
+      schedule();
+    });
+    caption.addEventListener('focus', schedule);
+    caption.addEventListener('blur', schedule);
+    document.addEventListener('visibilitychange', schedule);
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      schedule();
+    }).observe(document.getElementById('hero'));
+
+    show(0);
+    document.body.classList.add('slides-on');
+    caption.hidden = false;
+    toggle.hidden = false;
+    updateControl();
   }
 
-  // всё, что работает с карточками, запускаем после того, как js/content.js расставит содержимое
-  function start() {
-    [initStickyBar, initDatesSheet, initDateCalendar, initRoomTabs, initRoomWheel, initRoomDialog, initRoomCompare, initBookButtons, initShimmer, initFindUs, initInfoCards, initCarousels, initContacts, initSwipeClose, initSlides].forEach((init) => {
+  function runInitializers(initializers) {
+    initializers.forEach((init) => {
       try {
         init();
       } catch (err) {
@@ -895,6 +1072,26 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    (window.contentReady || Promise.resolve()).then(start, start);
+    runInitializers([initStickyBar, initDatesSheet, initDateCalendar, initFindUs, initSwipeClose, initSlides, initShimmer]);
+
+    const sections = window.contentSections;
+    if (!sections) return;
+    sections.settings.then(() => runInitializers([initContacts]));
+    sections.rooms.then(() => {
+      runInitializers([initRoomTabs, initRoomWheel, initRoomDialog, initRoomCompare,
+        () => initCarousels('rooms'), () => initShimmer(document.getElementById('rooms'))]);
+    });
+
+    const cardSections = { restaurant: 'restaurant', fitness: 'services', business: 'business', tours: 'concierge' };
+    Object.entries(cardSections).forEach(([name, id]) => {
+      sections[name].then(() => {
+        const root = document.getElementById(id);
+        runInitializers([() => initInfoCards(root), () => initCarousels(name), () => initShimmer(root)]);
+      });
+    });
+    sections.offers.then(() => {
+      runInitializers([() => initCarousels('offers'), () => initShimmer(document.getElementById('offers'))]);
+    });
+    sections.reviews.then(() => runInitializers([() => initCarousels('reviews')]));
   });
 })();

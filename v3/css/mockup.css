@@ -429,12 +429,13 @@
 
 /* ---------- Пометка «Демо-макет» ---------- */
 .demo-badge {
-  position: fixed;
-  left: 12px;
-  bottom: 12px;
-  z-index: 120;
+  align-self: center;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
+  justify-content: center;
+  max-width: calc(100% - 24px);
+  margin: 8px 12px 0;
   gap: 8px;
   padding: 6px 12px;
   border: 1px dashed rgba(197, 164, 126, 0.9);
@@ -444,7 +445,6 @@
   line-height: 1.3;
   white-space: nowrap;
   color: rgba(255, 255, 255, 0.7);
-  pointer-events: none;
 }
 
 .demo-badge b {
@@ -491,8 +491,8 @@
 
 /* ---------- Плашка «Демо» + переключатель слайд-шоу ---------- */
 .demo-badge__toggle {
-  pointer-events: auto;
   margin-left: 6px;
+  min-height: 28px;
   padding: 2px 10px;
   border: 1px solid rgba(200, 152, 116, 0.6);
   border-radius: 999px;
@@ -501,7 +501,7 @@
   cursor: pointer;
 }
 
-.demo-badge__toggle[aria-pressed="true"] {
+.demo-badge__toggle:hover {
   background: var(--color-gold);
   color: var(--color-bg-dark);
 }
@@ -527,7 +527,7 @@
   background: var(--color-white);
 }
 
-/* ---------- Слайд-шоу на первом экране (вариант, п. 2) ---------- */
+/* ---------- Карусель на первом экране ---------- */
 .hero-slides {
   position: absolute;
   inset: 0;
@@ -546,7 +546,13 @@
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 0.9s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slides__slide {
+    transition: none;
+  }
 }
 
 .hero-slides__slide.is-active {
@@ -561,16 +567,24 @@
 }
 
 .hero-slides__caption {
-  position: absolute;
-  z-index: 2;
-  right: max(24px, calc((100vw - var(--container-width)) / 2));
-  bottom: 150px;
+  align-self: flex-end;
+  margin: 0 max(var(--page-gutter), calc((100vw - var(--container-width)) / 2)) 12px;
   padding: 8px 16px;
   border-radius: 999px;
   background: rgba(6, 21, 24, 0.75);
   border: 1px solid rgba(200, 152, 116, 0.6);
   font-size: 14px;
   color: var(--color-gold-light);
+}
+
+@media (max-width: 600px) and (max-height: 650px) {
+  .hero__content {
+    padding-block: 32px 12px;
+  }
+
+  .hero-slides__caption {
+    margin-bottom: 8px;
+  }
 }
 
 /* ---------- Первый экран: «Выбрать даты» на телефоне (п. 4) ---------- */
@@ -580,6 +594,41 @@
 
 .booking__sheet-head {
   display: none;
+}
+
+.booking__selection,
+.booking__feedback {
+  position: relative;
+  z-index: 1;
+  width: min(var(--container-width), 100%);
+  margin-inline: auto;
+  color: var(--color-white);
+  font-size: 15px;
+}
+
+.booking__selection {
+  margin-bottom: 12px;
+}
+
+.booking__feedback:has(p:not(:empty)) {
+  margin-top: 12px;
+}
+
+:is([data-wa], [data-tel], [data-email], [data-social], [data-booking-contacts], [data-needs-whatsapp], a[href="#offers"], .cta-row, .room-dialog__media .rc__badge, .rooms-compare-bar, #rooms-retry)[hidden] {
+  display: none !important;
+}
+
+.booking__feedback a,
+.findus__contacts a {
+  color: var(--color-gold-light);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.findus__contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
 }
 
 /* ---------- Полоса преимуществ (п. 5) ---------- */
@@ -923,10 +972,6 @@
     display: none;
   }
 
-  .demo-badge {
-    bottom: 76px;
-  }
-
   /* Форма бронирования → панель снизу по кнопке «Выбрать даты» */
   .hero__dates {
     display: block;
@@ -947,9 +992,12 @@
 
   .hero .booking.is-open {
     position: fixed;
-    inset: auto 0 0 0;
+    inset: auto 0 var(--booking-viewport-bottom, 0px) 0;
     z-index: 150;
     display: block;
+    max-height: var(--booking-viewport-height, 100dvh);
+    overflow-y: auto;
+    scroll-padding: 16px;
     padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
     background: var(--color-bg);
     border-top: 1px solid rgba(200, 152, 116, 0.45);
@@ -981,15 +1029,38 @@
     cursor: pointer;
   }
 
-  .booking.is-open .reveal {
-    opacity: 1 !important;
-    transform: none !important;
+  .booking.is-open .booking__container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .hero-slides__caption {
-    right: 16px;
-    bottom: 120px;
+  .booking.is-open .booking__actions {
+    display: contents;
   }
+
+  .booking.is-open :is(#guests-dropdown, #promo-dropdown) {
+    position: static;
+    width: auto;
+    padding: 12px;
+  }
+
+  .booking.is-open .booking-dropdown__counter {
+    gap: 8px;
+  }
+
+  .booking.is-open .booking-dropdown__promo-input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    font-size: 16px;
+  }
+
+  .booking.is-open #promo-apply {
+    flex: none;
+    width: auto;
+    padding-inline: 12px;
+  }
+
 
   .rooms3__header,
   .faq__inner {
@@ -1075,26 +1146,11 @@
     transform: translateY(0);
   }
 
-  .demo-badge {
-    top: 64px;
-    bottom: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
   .demo-badge span {
     display: none;
   }
 }
 
-@media (max-width: 900px) {
-  .bar-on .demo-badge {
-    top: auto;
-    bottom: 74px;
-    left: 8px;
-    transform: none;
-  }
-}
 
 /* =========================================================
    МАКЕТ v3 — один стиль кнопок, номера во вкладышах, монолитный фон
@@ -2463,6 +2519,10 @@ html {
 }
 
 /* ---------- Сравнение всех номеров ---------- */
+#rooms-retry {
+  margin-top: 12px;
+}
+
 .rooms-compare-bar {
   display: flex;
   margin-top: 20px;
@@ -2470,6 +2530,7 @@ html {
 
 .rooms-compare {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2479,8 +2540,14 @@ html {
 }
 
 .rooms-compare__inner {
+  position: relative;
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+.rooms-compare.is-open .rooms-compare__inner {
+  overflow-x: auto;
 }
 
 .rooms-compare__table {
@@ -2618,18 +2685,6 @@ html {
 }
 
 /* ---------- Плашка «Демо» на телефоне: только на первом экране, дальше не закрывает контент ---------- */
-@media (max-width: 900px) {
-  .demo-badge {
-    transition: opacity 0.3s ease, visibility 0s linear 0s;
-  }
-
-  .bar-on .demo-badge {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
-  }
-}
 
 /* ---------- Клавиатура: заметная рамка фокуса и ссылка «Перейти к содержанию» ---------- */
 :where(a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
@@ -3420,10 +3475,10 @@ html {
     position: fixed;
     top: auto;
     right: 0;
-    bottom: 0;
+    bottom: var(--booking-viewport-bottom, 0px);
     left: 0;
     z-index: 20;
-    max-height: 92dvh;
+    max-height: min(92dvh, var(--booking-viewport-height, 100dvh));
     overflow-y: auto;
     padding: 20px var(--page-gutter) calc(18px + env(safe-area-inset-bottom));
     border-bottom: none;
@@ -3440,15 +3495,6 @@ html {
   -webkit-backdrop-filter: none;
 }
 
-@media (max-width: 900px) {
-  /* плашка «Демо» при прокрутке только гаснет на месте — без скачка вниз экрана */
-  .bar-on .demo-badge {
-    top: 64px;
-    bottom: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
 
 /* =========================================================
    МАКЕТ v10 — анимации в стиле туров: при наведении текст поднимается, описание выплывает снизу
